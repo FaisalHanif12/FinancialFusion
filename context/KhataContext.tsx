@@ -9,20 +9,31 @@ export interface Expense {
   amount: number;
 }
 
+export interface Transaction {
+  id: string;
+  date: string;
+  type: 'ADD_AMOUNT' | 'EXPENSE';
+  description: string;
+  amount: number;
+  balanceAfter: number;
+}
+
 export interface Khata {
   id: string;
   name: string;
   date: string;
   totalAmount: number;
   expenses: Expense[];
+  transactions: Transaction[];
 }
 
 // Define the context type
 interface KhataContextType {
   khatas: Khata[];
   loading: boolean;
-  addKhata: (khata: Omit<Khata, 'id' | 'expenses'>) => Promise<void>;
+  addKhata: (khata: Omit<Khata, 'id' | 'expenses' | 'transactions'>) => Promise<void>;
   addExpense: (khataId: string, expense: Omit<Expense, 'id'>) => Promise<void>;
+  addAmount: (khataId: string, amount: number, description?: string) => Promise<void>;
   getKhata: (id: string) => Khata | undefined;
 }
 
@@ -32,6 +43,7 @@ export const KhataContext = createContext<KhataContextType>({
   loading: true,
   addKhata: async () => {},
   addExpense: async () => {},
+  addAmount: async () => {},
   getKhata: () => undefined,
 });
 
@@ -79,11 +91,19 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   }, [khatas, loading]);
 
   // Add a new khata
-  const addKhata = async (khata: Omit<Khata, 'id' | 'expenses'>) => {
+  const addKhata = async (khata: Omit<Khata, 'id' | 'expenses' | 'transactions'>) => {
     const newKhata: Khata = {
       ...khata,
       id: Date.now().toString(),
       expenses: [],
+      transactions: [{
+        id: Date.now().toString(),
+        date: khata.date,
+        type: 'ADD_AMOUNT',
+        description: 'Initial amount',
+        amount: khata.totalAmount,
+        balanceAfter: khata.totalAmount
+      }],
     };
 
     setKhatas((prevKhatas) => [...prevKhatas, newKhata]);
@@ -102,10 +122,50 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
           // Calculate new total amount after expense
           const newTotalAmount = khata.totalAmount - newExpense.amount;
           
+          // Create transaction record
+          const newTransaction: Transaction = {
+            id: Date.now().toString(),
+            date: expense.date,
+            type: 'EXPENSE',
+            description: expense.source,
+            amount: expense.amount,
+            balanceAfter: newTotalAmount
+          };
+          
           return {
             ...khata,
             totalAmount: newTotalAmount,
             expenses: [...khata.expenses, newExpense],
+            transactions: [...khata.transactions, newTransaction]
+          };
+        }
+        return khata;
+      })
+    );
+  };
+
+  // Add amount to a khata
+  const addAmount = async (khataId: string, amount: number, description: string = 'Added amount') => {
+    setKhatas((prevKhatas) =>
+      prevKhatas.map((khata) => {
+        if (khata.id === khataId) {
+          // Calculate new total amount after adding
+          const newTotalAmount = khata.totalAmount + amount;
+          
+          // Create transaction record
+          const newTransaction: Transaction = {
+            id: Date.now().toString(),
+            date: new Date().toISOString().split('T')[0],
+            type: 'ADD_AMOUNT',
+            description,
+            amount,
+            balanceAfter: newTotalAmount
+          };
+          
+          return {
+            ...khata,
+            totalAmount: newTotalAmount,
+            transactions: [...khata.transactions, newTransaction]
           };
         }
         return khata;
@@ -119,7 +179,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   };
 
   return (
-    <KhataContext.Provider value={{ khatas, loading, addKhata, addExpense, getKhata }}>
+    <KhataContext.Provider value={{ khatas, loading, addKhata, addExpense, addAmount, getKhata }}>
       {children}
     </KhataContext.Provider>
   );

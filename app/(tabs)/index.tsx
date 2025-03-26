@@ -35,7 +35,7 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">FinancialFusion</ThemedText>
+        <ThemedText type="title" style={styles.title}>FinancialFusion</ThemedText>
         <ThemedText style={styles.subtitle}>Manage your Khata effortlessly</ThemedText>
       </ThemedView>
 
@@ -70,11 +70,19 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 24,
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     marginTop: 4,
     opacity: 0.7,
+    textAlign: 'center',
   },
   listContainer: {
     flexGrow: 1,

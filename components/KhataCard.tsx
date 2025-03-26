@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, GestureResponderEvent } from 'react-native';
 import { useRouter } from 'expo-router';
 import styled from 'styled-components/native';
 import { Khata } from '../context/KhataContext';
@@ -34,18 +34,21 @@ const Card = styled(ThemedView)`
   shadow-color: #000;
   shadow-offset: 0px 4px;
   elevation: 5;
+  align-items: center;
 `;
 
 const KhataName = styled(ThemedText)`
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 8px;
+  text-align: center;
 `;
 
 const DateText = styled(ThemedText)`
   font-size: 14px;
   color: ${(props: ThemeProps) => props.theme.colors.secondary};
   margin-bottom: 16px;
+  text-align: center;
 `;
 
 const AmountText = styled(ThemedText)`
@@ -53,6 +56,8 @@ const AmountText = styled(ThemedText)`
   font-weight: 700;
   color: ${(props: ThemeProps) => props.theme.colors.primary};
   margin-top: 8px;
+  margin-bottom: 16px;
+  text-align: center;
 `;
 
 const ButtonText = styled(ThemedText)`
@@ -61,23 +66,70 @@ const ButtonText = styled(ThemedText)`
   font-size: 14px;
 `;
 
+const ButtonsContainer = styled(View)`
+  width: 100%;
+  margin-top: 8px;
+`;
+
 const AddExpenseButton = styled(TouchableOpacity)`
   background-color: ${(props: ThemeProps) => props.theme.colors.primary};
-  padding: 8px 16px;
+  padding: 12px 16px;
   border-radius: 8px;
   align-items: center;
-  margin-top: 16px;
+  margin-top: 8px;
+  width: 100%;
+`;
+
+const AddAmountButton = styled(TouchableOpacity)`
+  background-color: #22A45D;
+  padding: 12px 16px;
+  border-radius: 8px;
+  align-items: center;
+  margin-top: 8px;
+  width: 100%;
+`;
+
+const ViewHistoryButton = styled(TouchableOpacity)`
+  background-color: #8661C1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  align-items: center;
+  margin-top: 8px;
+  width: 100%;
 `;
 
 export const KhataCard: React.FC<KhataCardProps> = ({ khata }) => {
   const router = useRouter();
 
   const handleCardPress = () => {
-    router.push(`/khata/${khata.id}`);
+    router.push({
+      pathname: '/khata/[id]',
+      params: { id: khata.id }
+    });
   };
 
-  const handleAddExpense = () => {
-    router.push(`/add-expense/${khata.id}`);
+  const handleAddExpense = (e: GestureResponderEvent) => {
+    e.stopPropagation();
+    router.push({
+      pathname: '/add-expense/[id]',
+      params: { id: khata.id }
+    });
+  };
+
+  const handleAddAmount = (e: GestureResponderEvent) => {
+    e.stopPropagation();
+    router.push({
+      pathname: '/khata/[id]',
+      params: { id: khata.id, action: 'add-amount' }
+    });
+  };
+
+  const handleViewHistory = (e: GestureResponderEvent) => {
+    e.stopPropagation();
+    router.push({
+      pathname: '/khata/[id]',
+      params: { id: khata.id, action: 'history' }
+    });
   };
 
   return (
@@ -85,14 +137,33 @@ export const KhataCard: React.FC<KhataCardProps> = ({ khata }) => {
       <Card>
         <KhataName>{khata.name}</KhataName>
         <DateText>Created on {khata.date}</DateText>
-        <ThemedText>Total Amount</ThemedText>
+        <ThemedText style={styles.label}>Total Amount</ThemedText>
         <AmountText>₹{khata.totalAmount.toFixed(2)}</AmountText>
-        <AddExpenseButton onPress={handleAddExpense}>
-          <ButtonText>Add Expense</ButtonText>
-        </AddExpenseButton>
+        
+        <ButtonsContainer>
+          <AddExpenseButton onPress={handleAddExpense}>
+            <ButtonText>Add Expense</ButtonText>
+          </AddExpenseButton>
+          
+          <AddAmountButton onPress={handleAddAmount}>
+            <ButtonText>Add Amount</ButtonText>
+          </AddAmountButton>
+          
+          <ViewHistoryButton onPress={handleViewHistory}>
+            <ButtonText>View History</ButtonText>
+          </ViewHistoryButton>
+        </ButtonsContainer>
       </Card>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 14,
+    opacity: 0.7,
+    textAlign: 'center',
+  },
+});
 
 export default KhataCard; 

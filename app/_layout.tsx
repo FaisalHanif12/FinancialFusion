@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { ActivityIndicator, useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemedView } from '@/components/ThemedView';
 import { KhataProvider } from '@/context/KhataContext';
@@ -47,14 +48,16 @@ function RootLayoutNav() {
   const navigationRef = useNavigationContainerRef();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StyledThemeProvider>
-        <KhataProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </KhataProvider>
-      </StyledThemeProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StyledThemeProvider>
+          <KhataProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </KhataProvider>
+        </StyledThemeProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
