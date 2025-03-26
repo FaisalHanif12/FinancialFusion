@@ -1,50 +1,102 @@
-# Welcome to your Expo app 👋
+# FinancialFusion
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A sleek, intuitive React Native app designed to effortlessly manage financial records (Khata). This app enables users to create a Khata, store financial details, and track expenses seamlessly.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Create Khata**: Easily create a new financial record with name, date, and total amount
+- **Track Expenses**: Add expenses to each Khata with source and amount
+- **Real-time Balance**: Automatically updates remaining balance as expenses are added
+- **Persistent Storage**: All data is stored locally using AsyncStorage
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **React Native (Expo)**: For cross-platform mobile app development
+- **AsyncStorage**: For local persistent storage
+- **React Navigation**: For smooth navigation between screens
+- **Styled Components**: For styling the UI components
+- **Context API**: For state management
 
-   ```bash
-    npx expo start
-   ```
+## Screenshots
 
-In the output, you'll find options to open the app in a
+[Screenshots will be added here]
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Installation
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+1. **Clone the repository**
 
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/FinancialFusion.git
+cd FinancialFusion
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. **Install dependencies**
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3. **Set execution policy (for Windows users)**
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
-## Join the community
+4. **Start the application**
 
-Join our community of developers creating universal apps.
+```bash
+npm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Usage
+
+1. **Home Screen**:
+   - View all your Khatas
+   - Tap the "+" button to create a new Khata
+
+2. **Creating a Khata**:
+   - Enter the name of the person/entity
+   - Enter the total amount
+   - Tap "Create" to save
+
+3. **Viewing a Khata**:
+   - Tap on any Khata card to view details
+   - See the total amount and all expenses
+   - Add new expenses
+
+4. **Adding an Expense**:
+   - Enter the source of expense
+   - Enter the amount
+   - Tap "Add Expense" to save
+
+## Development
+
+### Project Structure
+
+```
+FinancialFusion/
+├── app/                  # Main application screens
+│   ├── (tabs)/           # Tab screens
+│   ├── khata/            # Khata detail screens
+│   └── add-expense/      # Add expense screens
+├── components/           # Reusable UI components
+├── constants/            # Theme and constants
+├── context/              # Context providers
+│   ├── KhataContext.tsx  # Khata state management
+│   └── ThemeProvider.tsx # Styled-components theme provider
+└── assets/               # Images, fonts, etc.
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- [Expo](https://expo.dev/)
+- [React Native](https://reactnative.dev/)
+- [Styled Components](https://styled-components.com/)
