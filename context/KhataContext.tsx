@@ -135,8 +135,8 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
           return {
             ...khata,
             totalAmount: newTotalAmount,
-            expenses: [...khata.expenses, newExpense],
-            transactions: [...khata.transactions, newTransaction]
+            expenses: Array.isArray(khata.expenses) ? [...khata.expenses, newExpense] : [newExpense],
+            transactions: Array.isArray(khata.transactions) ? [...khata.transactions, newTransaction] : [newTransaction]
           };
         }
         return khata;
@@ -165,7 +165,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
           return {
             ...khata,
             totalAmount: newTotalAmount,
-            transactions: [...khata.transactions, newTransaction]
+            transactions: Array.isArray(khata.transactions) ? [...khata.transactions, newTransaction] : [newTransaction]
           };
         }
         return khata;

@@ -84,6 +84,8 @@ const ModalContainer = styled(ThemedView)`
   background-color: ${(props: ThemeProps) => props.theme.colors.background};
   padding: 24px;
   border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
 `;
 
 const ModalTitle = styled(ThemedText)`
@@ -104,15 +106,17 @@ const StyledInput = styled(TextInput)`
   background-color: ${(props: ThemeProps) => props.theme.colors.card};
 `;
 
-const ButtonsRow = styled(ThemedView)`
+const ButtonsRow = styled(View)`
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
 `;
 
 const ModalButton = styled(TouchableOpacity)`
-  padding: 12px 20px;
+  padding: 12px;
   border-radius: 8px;
   align-items: center;
+  justify-content: center;
   flex: 1;
   margin: 0 5px;
 `;
@@ -342,20 +346,20 @@ export default function KhataScreen() {
                 onChangeText={setDescription}
                 placeholderTextColor="#999"
               />
-              <ButtonsRow>
-                <ModalButton 
-                  style={{ backgroundColor: '#f0f0f0' }}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity 
+                  style={styles.cancelButton}
                   onPress={() => setShowAddAmountModal(false)}
                 >
-                  <ThemedText>Cancel</ThemedText>
-                </ModalButton>
-                <ModalButton 
-                  style={{ backgroundColor: '#22A45D' }}
+                  <ThemedText style={{ fontWeight: '600', color: '#444444' }}>Cancel</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.addButton}
                   onPress={handleAddAmountSubmit}
                 >
                   <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Add</ThemedText>
-                </ModalButton>
-              </ButtonsRow>
+                </TouchableOpacity>
+              </View>
             </ModalContainer>
           </View>
         </Modal>
@@ -485,5 +489,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 16
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
+  cancelButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    marginRight: 8,
+    backgroundColor: '#e0e0e0',
+    borderWidth: 1,
+    borderColor: '#cccccc',
+  },
+  addButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center', 
+    justifyContent: 'center',
+    flex: 1,
+    marginLeft: 8,
+    backgroundColor: '#22A45D',
   },
 }); 
