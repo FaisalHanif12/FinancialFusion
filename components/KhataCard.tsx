@@ -80,24 +80,6 @@ const AddExpenseButton = styled(TouchableOpacity)`
   width: 100%;
 `;
 
-const AddAmountButton = styled(TouchableOpacity)`
-  background-color: #22A45D;
-  padding: 12px 16px;
-  border-radius: 8px;
-  align-items: center;
-  margin-top: 8px;
-  width: 100%;
-`;
-
-const ViewHistoryButton = styled(TouchableOpacity)`
-  background-color: #8661C1;
-  padding: 12px 16px;
-  border-radius: 8px;
-  align-items: center;
-  margin-top: 8px;
-  width: 100%;
-`;
-
 export const KhataCard: React.FC<KhataCardProps> = ({ khata }) => {
   const router = useRouter();
 
@@ -116,22 +98,6 @@ export const KhataCard: React.FC<KhataCardProps> = ({ khata }) => {
     });
   };
 
-  const handleAddAmount = (e: GestureResponderEvent) => {
-    e.stopPropagation();
-    router.push({
-      pathname: '/khata/[id]',
-      params: { id: khata.id, action: 'add-amount' }
-    });
-  };
-
-  const handleViewHistory = (e: GestureResponderEvent) => {
-    e.stopPropagation();
-    router.push({
-      pathname: '/khata/[id]',
-      params: { id: khata.id, action: 'history' }
-    });
-  };
-
   return (
     <TouchableOpacity onPress={handleCardPress} activeOpacity={0.7}>
       <Card>
@@ -144,14 +110,6 @@ export const KhataCard: React.FC<KhataCardProps> = ({ khata }) => {
           <AddExpenseButton onPress={handleAddExpense}>
             <ButtonText>Add Expense</ButtonText>
           </AddExpenseButton>
-          
-          <AddAmountButton onPress={handleAddAmount}>
-            <ButtonText>Add Amount</ButtonText>
-          </AddAmountButton>
-          
-          <ViewHistoryButton onPress={handleViewHistory}>
-            <ButtonText>View History</ButtonText>
-          </ViewHistoryButton>
         </ButtonsContainer>
       </Card>
     </TouchableOpacity>

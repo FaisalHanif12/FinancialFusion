@@ -33,6 +33,7 @@ const Card = styled(ThemedView)`
   shadow-color: #000;
   shadow-offset: 0px 3px;
   align-items: center;
+  position: relative;
 `;
 
 const ExpenseItem = styled(ThemedView)`
@@ -131,6 +132,23 @@ const HistoryItem = styled(ThemedView)`
   shadow-radius: 4px;
   shadow-color: #000;
   shadow-offset: 0px 2px;
+`;
+
+const ActionIcon = styled(TouchableOpacity)`
+  position: absolute;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AddAmountIcon = styled(ActionIcon)`
+  top: 16px;
+  right: 16px;
+`;
+
+const ViewHistoryIcon = styled(ActionIcon)`
+  top: 16px;
+  left: 16px;
 `;
 
 export default function KhataScreen() {
@@ -264,6 +282,12 @@ export default function KhataScreen() {
       />
       <ThemedView style={styles.container}>
         <Card>
+          <ViewHistoryIcon onPress={() => setActiveTab('history')}>
+            <FontAwesome name="history" size={20} color="#4A80F0" />
+          </ViewHistoryIcon>
+          <AddAmountIcon onPress={handleAddAmount}>
+            <FontAwesome name="plus-circle" size={20} color="#22A45D" />
+          </AddAmountIcon>
           <ThemedText style={styles.cardLabel}>Total Amount</ThemedText>
           <ThemedText style={styles.totalAmount}>₹{khata.totalAmount.toFixed(2)}</ThemedText>
           <ThemedText style={styles.createdOn}>Created on {khata.date}</ThemedText>
@@ -314,12 +338,8 @@ export default function KhataScreen() {
         )}
 
         <View style={styles.fabContainer}>
-          <TouchableOpacity style={[styles.fab, styles.fabLeft]} onPress={handleAddAmount}>
-            <FontAwesome name="plus" size={24} color="white" />
-          </TouchableOpacity>
-          
           <TouchableOpacity style={styles.fab} onPress={handleAddExpense}>
-            <FontAwesome name="minus" size={24} color="white" />
+            <FontAwesome name="minus" size={20} color="white" />
           </TouchableOpacity>
         </View>
 
@@ -446,10 +466,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#4A80F0',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#e74c3c',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
