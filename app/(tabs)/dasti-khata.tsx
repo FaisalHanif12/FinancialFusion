@@ -403,16 +403,19 @@ export default function DastiKhataScreen() {
               {item.isPaid ? 'PAID' : 'UNPAID'}
             </StatusText>
           </Status>
-          <TouchableOpacity 
-            style={styles.deleteButton}
-            onPress={() => confirmDelete(item.id)}
-          >
-            <FontAwesome name="trash" size={16} color="#e74c3c" />
-          </TouchableOpacity>
         </View>
       </View>
       
-      <DastiKhataAmount isPaid={item.isPaid}>₹{item.amount.toFixed(2)}</DastiKhataAmount>
+      <View style={styles.actionsRow}>
+        <DastiKhataAmount isPaid={item.isPaid}>₹{item.amount.toFixed(2)}</DastiKhataAmount>
+        
+        <TouchableOpacity 
+          style={styles.deleteButton}
+          onPress={() => confirmDelete(item.id)}
+        >
+          <FontAwesome name="trash" size={16} color="#e74c3c" />
+        </TouchableOpacity>
+      </View>
       
       {!item.isPaid && (
         <TouchableOpacity 
@@ -933,12 +936,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   deleteButton: {
-    padding: 6,
+    padding: 8,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-end',
-    marginTop: 12,
   },
   payButtonText: {
     color: 'white',
@@ -1097,6 +1098,7 @@ const styles = StyleSheet.create({
   },
   calendarDayText: {
     fontSize: 16,
+    color: '#000000',
   },
   selectedDay: {
     backgroundColor: '#4A80F0',
@@ -1121,5 +1123,11 @@ const styles = StyleSheet.create({
   },
   disabledDayText: {
     color: '#999',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
   },
 }); 
