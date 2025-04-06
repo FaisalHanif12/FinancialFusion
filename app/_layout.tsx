@@ -9,6 +9,7 @@ import { ActivityIndicator, useColorScheme, View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { KhataProvider } from '@/context/KhataContext';
 import { ThemeProvider as StyledThemeProvider } from '@/context/ThemeProvider';
+import { AppProvider } from '@/contexts/AppContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -48,15 +49,17 @@ function RootLayoutNav() {
 
   return (
     <View style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StyledThemeProvider>
-          <KhataProvider>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </KhataProvider>
-        </StyledThemeProvider>
-      </ThemeProvider>
+      <AppProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <StyledThemeProvider>
+            <KhataProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+            </KhataProvider>
+          </StyledThemeProvider>
+        </ThemeProvider>
+      </AppProvider>
     </View>
   );
 }

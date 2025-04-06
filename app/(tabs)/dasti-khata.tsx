@@ -213,8 +213,9 @@ const CalendarNavButton = styled(TouchableOpacity)`
 `;
 
 const CalendarTitle = styled(ThemedText)`
-  fontSize: 18px;
-  fontWeight: 700;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
 `;
 
 const WeekdayHeader = styled(View)`
@@ -226,6 +227,10 @@ const WeekdayHeader = styled(View)`
 
 const WeekdayText = styled(ThemedText)`
   width: 14.28%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
 `;
 
 const CalendarDays = styled(View)`
@@ -571,7 +576,7 @@ export default function DastiKhataScreen() {
         </TouchableOpacity>
         
         {isExpanded && (
-          <View>
+          <View style={{ marginBottom: 10 }}>
             {khatas.map(khata => (
               <React.Fragment key={khata.id}>
                 {renderDastiKhataItem({ item: khata })}
@@ -632,7 +637,7 @@ export default function DastiKhataScreen() {
             data={visibleMonthEntries}
             keyExtractor={([monthKey]) => monthKey}
             renderItem={renderMonthSection}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingBottom: 120 }}
           />
           
           {hasMoreMonths && (
@@ -901,7 +906,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexGrow: 1,
-    paddingBottom: 80, // Space for FAB
+    paddingBottom: 120, // Increased padding for FAB and better scrolling
   },
   emptyContainer: {
     flex: 1,
@@ -1064,6 +1069,7 @@ const styles = StyleSheet.create({
   calendarTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000000',
   },
   calendarNavButton: {
     width: 40,
@@ -1083,6 +1089,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     fontWeight: '600',
+    color: '#000000',
   },
   calendarDays: {
     flexDirection: 'row',
