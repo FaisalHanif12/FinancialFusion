@@ -936,9 +936,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   deleteButton: {
-    padding: 8,
+    padding: 10,
     borderRadius: 8,
     alignItems: 'center',
+    marginRight: 13,
     justifyContent: 'center',
   },
   payButtonText: {
