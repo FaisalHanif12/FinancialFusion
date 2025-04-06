@@ -33,8 +33,11 @@ interface KhataContextType {
   loading: boolean;
   addKhata: (khata: Omit<Khata, 'id' | 'expenses' | 'transactions'>) => Promise<void>;
   addExpense: (khataId: string, expense: Omit<Expense, 'id'>) => Promise<void>;
-  addAmount: (khataId: string, amount: number, description?: string) => Promise<void>;
+  addAmount: (khataId: string, amount: number, description?: string, date?: string) => Promise<void>;
   getKhata: (id: string) => Khata | undefined;
+  deleteKhata: (id: string) => Promise<void>;
+  deleteExpense: (khataId: string, expenseId: string) => Promise<void>;
+  deleteTransaction: (khataId: string, transactionId: string) => Promise<void>;
 }
 
 // Create the context
@@ -45,6 +48,9 @@ export const KhataContext = createContext<KhataContextType>({
   addExpense: async () => {},
   addAmount: async () => {},
   getKhata: () => undefined,
+  deleteKhata: async () => {},
+  deleteExpense: async () => {},
+  deleteTransaction: async () => {},
 });
 
 // Create the provider component
@@ -145,7 +151,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   };
 
   // Add amount to a khata
-  const addAmount = async (khataId: string, amount: number, description: string = 'Added amount') => {
+  const addAmount = async (khataId: string, amount: number, description: string = 'Added amount', date: string = new Date().toISOString().split('T')[0]) => {
     setKhatas((prevKhatas) =>
       prevKhatas.map((khata) => {
         if (khata.id === khataId) {
@@ -155,7 +161,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
           // Create transaction record
           const newTransaction: Transaction = {
             id: Date.now().toString(),
-            date: new Date().toISOString().split('T')[0],
+            date: date,
             type: 'ADD_AMOUNT',
             description,
             amount,
@@ -178,8 +184,93 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
     return khatas.find((khata) => khata.id === id);
   };
 
+  // Delete a khata by ID
+  const deleteKhata = async (id: string) => {
+    setKhatas((prevKhatas) => prevKhatas.filter((khata) => khata.id !== id));
+  };
+
+  // Delete an expense from a khata
+  const deleteExpense = async (khataId: string, expenseId: string) => {
+    setKhatas((prevKhatas) =>
+      prevKhatas.map((khata) => {
+        if (khata.id === khataId) {
+          // Find the expense to delete
+          const expenseToDelete = khata.expenses.find(exp => exp.id === expenseId);
+          if (!expenseToDelete) return khata;
+          
+          // Calculate new total amount by adding back the expense amount
+          const newTotalAmount = khata.totalAmount + expenseToDelete.amount;
+          
+          // Remove the expense
+          const updatedExpenses = khata.expenses.filter(exp => exp.id !== expenseId);
+          
+          // Also find and remove the corresponding transaction
+          const updatedTransactions = khata.transactions.filter(trans => 
+            !(trans.type === 'EXPENSE' && trans.id === expenseId)
+          );
+          
+          return {
+            ...khata,
+            totalAmount: newTotalAmount,
+            expenses: updatedExpenses,
+            transactions: updatedTransactions
+          };
+        }
+        return khata;
+      })
+    );
+  };
+
+  // Delete a transaction from a khata
+  const deleteTransaction = async (khataId: string, transactionId: string) => {
+    setKhatas((prevKhatas) =>
+      prevKhatas.map((khata) => {
+        if (khata.id === khataId) {
+          // Find the transaction to delete
+          const transactionToDelete = khata.transactions.find(trans => trans.id === transactionId);
+          if (!transactionToDelete) return khata;
+          
+          let updatedExpenses = [...khata.expenses];
+          let newTotalAmount = khata.totalAmount;
+          
+          // Adjust total amount based on transaction type
+          if (transactionToDelete.type === 'ADD_AMOUNT') {
+            // If adding amount, subtract it from total
+            newTotalAmount = khata.totalAmount - transactionToDelete.amount;
+          } else if (transactionToDelete.type === 'EXPENSE') {
+            // If expense, add it back to total
+            newTotalAmount = khata.totalAmount + transactionToDelete.amount;
+            // Also remove the corresponding expense
+            updatedExpenses = khata.expenses.filter(exp => exp.id !== transactionId);
+          }
+          
+          // Remove the transaction
+          const updatedTransactions = khata.transactions.filter(trans => trans.id !== transactionId);
+          
+          return {
+            ...khata,
+            totalAmount: newTotalAmount,
+            expenses: updatedExpenses,
+            transactions: updatedTransactions
+          };
+        }
+        return khata;
+      })
+    );
+  };
+
   return (
-    <KhataContext.Provider value={{ khatas, loading, addKhata, addExpense, addAmount, getKhata }}>
+    <KhataContext.Provider value={{ 
+      khatas, 
+      loading, 
+      addKhata, 
+      addExpense, 
+      addAmount, 
+      getKhata, 
+      deleteKhata,
+      deleteExpense,
+      deleteTransaction
+    }}>
       {children}
     </KhataContext.Provider>
   );

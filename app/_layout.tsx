@@ -4,8 +4,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { ActivityIndicator, useColorScheme } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ActivityIndicator, useColorScheme, View } from 'react-native';
 
 import { ThemedView } from '@/components/ThemedView';
 import { KhataProvider } from '@/context/KhataContext';
@@ -48,7 +47,7 @@ function RootLayoutNav() {
   const navigationRef = useNavigationContainerRef();
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StyledThemeProvider>
           <KhataProvider>
@@ -58,6 +57,6 @@ function RootLayoutNav() {
           </KhataProvider>
         </StyledThemeProvider>
       </ThemeProvider>
-    </GestureHandlerRootView>
+    </View>
   );
 }
