@@ -3,15 +3,15 @@ import { StyleSheet, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyb
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import styled from 'styled-components/native';
 import { FontAwesome } from '@expo/vector-icons';
-
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useKhata } from '@/context/KhataContext';
+import { useKhata } from '../../context/KhataContext';
+import { ThemedView } from '../../components/ThemedView';
+import { ThemedText } from '../../components/ThemedText';
 import CustomAlert from '../components/CustomAlert';
+import { useAppContext } from '@/contexts/AppContext';
 
 // Define theme interface for type safety
 interface ThemeProps {
-  theme: {
+  theme: { 
     colors: {
       background: string;
       text: string;
@@ -103,10 +103,12 @@ const DateText = styled(ThemedText)`
 `;
 
 export default function AddExpenseScreen() {
-  const { id } = useLocalSearchParams();
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const id = (params.id as string) || '';
   const { getKhata, addExpense } = useKhata();
-  const [khata, setKhata] = useState(getKhata(id as string));
+  const { t } = useAppContext();
+  const [khata, setKhata] = useState(getKhata(id));
   
   const [source, setSource] = useState('');
   const [amount, setAmount] = useState('');
@@ -233,10 +235,10 @@ export default function AddExpenseScreen() {
   useEffect(() => {
     // Verify the khata exists
     if (!khata) {
-      showAlert('Error', 'Khata not found', 'error');
+      showAlert(t.error, t.khataNotFound, 'error');
       router.back();
     }
-  }, [khata, router]);
+  }, [khata, router, t]);
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     if (selectedDate) {
@@ -260,13 +262,13 @@ export default function AddExpenseScreen() {
     if (!khata) return;
     
     if (source.trim() === '' || amount.trim() === '') {
-      showAlert('Error', 'Please fill in all fields', 'error');
+      showAlert(t.error, t.fillAllFields, 'error');
       return;
     }
 
     const expenseAmount = parseFloat(amount);
     if (isNaN(expenseAmount) || expenseAmount <= 0) {
-      showAlert('Error', 'Please enter a valid amount', 'error');
+      showAlert(t.error, t.enterValidAmount, 'error');
       return;
     }
 
@@ -283,14 +285,14 @@ export default function AddExpenseScreen() {
         setKhata(updatedKhata);
       }
 
-      showAlert('Success', 'Expense added successfully!', 'success');
+      showAlert(t.success, t.expenseAddedSuccess, 'success');
       
       // Short delay before navigating back to show success message
       setTimeout(() => {
         router.back();
       }, 1500);
     } catch (error) {
-      showAlert('Error', 'Failed to add expense', 'error');
+      showAlert(t.error, t.failedToAddExpense, 'error');
     }
   };
 
@@ -303,35 +305,35 @@ export default function AddExpenseScreen() {
       <ThemedView style={styles.container}>
         <Stack.Screen 
           options={{
-            title: 'Add Expense',
-            headerBackTitle: 'Back',
+            title: t.addExpense || 'Add Expense',
+            headerBackTitle: t.back || 'Back',
           }}
         />
         <FormCard>
-          <Label>Source of Expense</Label>
+          <Label>{t.sourceOfExpense || 'Source of Expense'}</Label>
           <StyledInput
-            placeholder="e.g., Groceries, Rent, etc."
+            placeholder={t.expensePlaceholder || "e.g., Groceries, Rent, etc."}
             value={source}
             onChangeText={setSource}
             placeholderTextColor="#999"
           />
           
-          <Label>Expense Amount</Label>
+          <Label>{t.expenseAmount || 'Expense Amount'}</Label>
           <StyledInput
-            placeholder="Enter amount"
+            placeholder={t.enterAmount || "Enter amount"}
             value={amount}
             onChangeText={(text: string) => setAmount(text.replace(/[^0-9.]/g, ''))}
             keyboardType="numeric"
             placeholderTextColor="#999"
           />
           
-          <Label>Date</Label>
+          <Label>{t.date || 'Date'}</Label>
           <DateContainer 
             activeOpacity={0.7} 
             onPress={() => setShowDatePickerModal(true)}
           >
             <FontAwesome name="calendar" size={18} color="#666" />
-            <DateText>{formattedDate} (Tap to change)</DateText>
+            <DateText>{formattedDate} ({t.tapToChange || 'Tap to change'})</DateText>
           </DateContainer>
           
           {khata && (
@@ -339,16 +341,16 @@ export default function AddExpenseScreen() {
               styles.balanceLabel, 
               khata.totalAmount < 0 && styles.negativeBalanceLabel
             ]}>
-              Available Balance: {khata.totalAmount < 0 ? '-' : ''}₹{Math.abs(khata.totalAmount).toFixed(0)}
+              {t.availableBalance || 'Available Balance'}: {khata.totalAmount < 0 ? '-' : ''}{t.currency}{Math.abs(khata.totalAmount).toFixed(0)}
             </ThemedText>
           )}
           
           <SubmitButton onPress={handleAddExpense}>
-            <SubmitButtonText>Add Expense</SubmitButtonText>
+            <SubmitButtonText>{t.addExpense || 'Add Expense'}</SubmitButtonText>
           </SubmitButton>
           
           <CancelButton onPress={() => router.back()}>
-            <CancelButtonText>Cancel</CancelButtonText>
+            <CancelButtonText>{t.cancel || 'Cancel'}</CancelButtonText>
           </CancelButton>
         </FormCard>
         
@@ -362,7 +364,7 @@ export default function AddExpenseScreen() {
           <View style={styles.datePickerModalOverlay}>
             <View style={styles.datePickerModalContent}>
               <View style={styles.datePickerHeader}>
-                <ThemedText style={styles.datePickerTitle}>Select Date</ThemedText>
+                <ThemedText style={styles.datePickerTitle}>{t.selectDate || 'Select Date'}</ThemedText>
                 <TouchableOpacity onPress={() => setShowDatePickerModal(false)}>
                   <FontAwesome name="close" size={24} color="#666" />
                 </TouchableOpacity>
@@ -435,13 +437,13 @@ export default function AddExpenseScreen() {
                   style={styles.datePickerButton}
                   onPress={() => setShowDatePickerModal(false)}
                 >
-                  <ThemedText style={styles.datePickerButtonText}>Cancel</ThemedText>
+                  <ThemedText style={styles.datePickerButtonText}>{t.cancel || 'Cancel'}</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.datePickerButton, styles.datePickerConfirmButton]}
                   onPress={() => setShowDatePickerModal(false)}
                 >
-                  <ThemedText style={styles.datePickerConfirmText}>Confirm</ThemedText>
+                  <ThemedText style={styles.datePickerConfirmText}>{t.confirm || 'Confirm'}</ThemedText>
                 </TouchableOpacity>
               </View>
             </View>

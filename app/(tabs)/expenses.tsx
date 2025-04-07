@@ -4,20 +4,23 @@ import { FontAwesome } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useAppContext } from '@/contexts/AppContext';
 
 export default function ExpensesScreen() {
+  const { t } = useAppContext();
+  
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>Expenses</ThemedText>
-        <ThemedText style={styles.subtitle}>Track your expenses</ThemedText>
+        <ThemedText type="title" style={styles.title}>{t.expensesTitle}</ThemedText>
+        <ThemedText style={styles.subtitle}>{t.expensesSubtitle}</ThemedText>
       </ThemedView>
 
       <ThemedView style={styles.emptyContainer}>
         <FontAwesome name="money" size={64} color="#ccc" style={styles.emptyIcon} />
-        <ThemedText style={styles.emptyText}>No Expenses Yet</ThemedText>
+        <ThemedText style={styles.emptyText}>{t.noExpensesYet}</ThemedText>
         <ThemedText style={styles.emptySubtext}>
-          Tap the "+" button below to add a new expense
+          {t.tapToAddExpense}
         </ThemedText>
       </ThemedView>
 

@@ -9,7 +9,7 @@ import { ActivityIndicator, useColorScheme, View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { KhataProvider } from '@/context/KhataContext';
 import { ThemeProvider as StyledThemeProvider } from '@/context/ThemeProvider';
-import { AppProvider } from '@/contexts/AppContext';
+import { AppProvider, useAppContext } from '@/contexts/AppContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -40,26 +40,53 @@ export default function RootLayout() {
     return <ActivityIndicator />;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AppProvider>
+      <RootLayoutWithTheme />
+    </AppProvider>
+  );
 }
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+function RootLayoutWithTheme() {
+  const { isDark } = useAppContext();
   const navigationRef = useNavigationContainerRef();
+
+  // Use the theme from AppContext
+  const appTheme = isDark 
+    ? { 
+        ...DarkTheme, 
+        colors: {
+          ...DarkTheme.colors,
+          background: '#121212',
+          card: '#1E1E1E',
+          text: '#FFFFFF',
+          border: '#2A2A2A',
+          primary: '#5D8BF4',
+        } 
+      } 
+    : { 
+        ...DefaultTheme, 
+        colors: {
+          ...DefaultTheme.colors,
+          background: '#F8F9FA',
+          card: '#FFFFFF',
+          text: '#202124',
+          border: '#DADCE0',
+          primary: '#4A80F0',
+        } 
+      };
 
   return (
     <View style={{ flex: 1 }}>
-      <AppProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <StyledThemeProvider>
-            <KhataProvider>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
-            </KhataProvider>
-          </StyledThemeProvider>
-        </ThemeProvider>
-      </AppProvider>
+      <ThemeProvider value={appTheme}>
+        <StyledThemeProvider>
+          <KhataProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </KhataProvider>
+        </StyledThemeProvider>
+      </ThemeProvider>
     </View>
   );
 }

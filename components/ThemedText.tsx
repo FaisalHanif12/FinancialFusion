@@ -1,11 +1,13 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
-
+import { useAppContext } from '@/contexts/AppContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  colorType?: 'text' | 'primary' | 'secondary';
+  transliterate?: boolean;
 };
 
 export function ThemedText({
@@ -13,9 +15,20 @@ export function ThemedText({
   lightColor,
   darkColor,
   type = 'default',
+  colorType = 'text',
+  transliterate = true,
+  children,
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const { isUrdu, getRtlTextStyle, transliterateText } = useAppContext();
+  
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, colorType);
+
+  let processedChildren = children;
+  
+  if (transliterate && typeof children === 'string') {
+    processedChildren = transliterateText(children);
+  }
 
   return (
     <Text
@@ -26,10 +39,13 @@ export function ThemedText({
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
+        isUrdu ? getRtlTextStyle() : undefined,
         style,
       ]}
       {...rest}
-    />
+    >
+      {processedChildren}
+    </Text>
   );
 }
 
@@ -46,15 +62,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    lineHeight: 32,
+    lineHeight: 38,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    lineHeight: 26,
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    color: '#4A80F0',
   },
 });

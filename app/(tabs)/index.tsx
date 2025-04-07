@@ -8,11 +8,13 @@ import KhataCard from '@/components/KhataCard';
 import CreateKhataModal from '@/components/CreateKhataModal';
 import { useKhata } from '@/context/KhataContext';
 import { FontAwesome } from '@expo/vector-icons';
+import { useAppContext } from '@/contexts/AppContext';
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const { khatas, loading } = useKhata();
   const router = useRouter();
+  const { t, isDark } = useAppContext();
 
   const openModal = () => {
     setModalVisible(true);
@@ -24,10 +26,10 @@ export default function HomeScreen() {
 
   const renderEmptyState = () => (
     <ThemedView style={styles.emptyContainer}>
-      <FontAwesome name="book" size={64} color="#ccc" style={styles.emptyIcon} />
-      <ThemedText style={styles.emptyText}>No Khata Yet</ThemedText>
+      <FontAwesome name="book" size={64} color={isDark ? "#444" : "#ccc"} style={styles.emptyIcon} />
+      <ThemedText style={styles.emptyText}>{t.noKhataYet}</ThemedText>
       <ThemedText style={styles.emptySubtext}>
-        Tap the "Create Khata" button below to get started
+        {t.tapToCreateKhata}
       </ThemedText>
     </ThemedView>
   );
@@ -35,13 +37,13 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>FinancialFusion</ThemedText>
-        <ThemedText style={styles.subtitle}>Manage your Khata effortlessly</ThemedText>
+        <ThemedText type="title" style={styles.title}>{t.financialFusion}</ThemedText>
+        <ThemedText colorType="secondary" style={styles.subtitle}>{t.manageKhata}</ThemedText>
       </ThemedView>
 
       {loading ? (
         <ThemedView style={styles.loadingContainer}>
-          <ThemedText>Loading...</ThemedText>
+          <ThemedText>{t.loading}</ThemedText>
         </ThemedView>
       ) : (
         <FlatList

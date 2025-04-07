@@ -5,7 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { ThemedTextInput } from '@/components/ThemedTextInput';
 import styled from 'styled-components/native';
+import { useAppContext } from '@/contexts/AppContext';
 
 // Define theme interface for type safety
 interface ThemeProps {
@@ -74,7 +76,11 @@ const StatusText = styled(ThemedText)<{ isPaid: boolean }>`
   font-weight: 600;
 `;
 
-const SearchInput = styled(TextInput)`
+// Replace SearchInput with ThemedTextInput
+const SearchInput = styled(ThemedTextInput).attrs((props: ThemeProps & { placeholder: string }) => ({
+  placeholder: props.placeholder,
+  placeholderTextColor: props.theme.colors.secondary
+}))`
   border-width: 1px;
   border-color: ${(props: ThemeProps) => props.theme.colors.border};
   border-radius: 8px;
@@ -116,8 +122,8 @@ const ModalButton = styled(TouchableOpacity)`
   margin-horizontal: 8px;
 `;
 
-// Add the missing StyledInput component
-const StyledInput = styled(TextInput)`
+// Replace StyledInput with ThemedTextInput
+const StyledInput = styled(ThemedTextInput)`
   border-width: 1px;
   border-color: ${(props: ThemeProps) => props.theme.colors.border};
   border-radius: 8px;
@@ -305,6 +311,9 @@ export default function DastiKhataScreen() {
   const [expandAll, setExpandAll] = useState(false);
   const [visibleMonths, setVisibleMonths] = useState(6);
   
+  // Get translations from our app context
+  const { t } = useAppContext();
+  
   // Format the selected date as YYYY-MM-DD
   const formattedDate = `${selectedDate.getUTCFullYear()}-${String(selectedDate.getUTCMonth() + 1).padStart(2, '0')}-${String(selectedDate.getUTCDate()).padStart(2, '0')}`;
   
@@ -314,33 +323,8 @@ export default function DastiKhataScreen() {
     setCurrentYear(selectedDate.getUTCFullYear());
   }, [selectedDate]);
   
-  // Example data
-  const [dastiKhatas, setDastiKhatas] = useState<DastiKhata[]>([
-    {
-      id: '1',
-      name: 'Ahmed',
-      amount: 5000,
-      date: '2023-03-15',
-      isPaid: false,
-      description: 'Borrowed for business',
-    },
-    {
-      id: '2',
-      name: 'Farhan',
-      amount: 3000,
-      date: '2023-03-10',
-      isPaid: true,
-      description: 'Lent for emergency',
-    },
-    {
-      id: '3',
-      name: 'Saad',
-      amount: 7500,
-      date: '2023-03-20',
-      isPaid: false,
-      description: 'Home renovation',
-    },
-  ]);
+  // Initialize with an empty array instead of static data
+  const [dastiKhatas, setDastiKhatas] = useState<DastiKhata[]>([]);
 
   const markAsPaid = (id: string) => {
     setDastiKhatas(
@@ -397,7 +381,7 @@ export default function DastiKhataScreen() {
       <View style={styles.cardHeader}>
         <View>
           <DastiKhataName>{item.name}</DastiKhataName>
-          <DastiKhataDate>Created on {item.date}</DastiKhataDate>
+          <DastiKhataDate>{t.created} {item.date}</DastiKhataDate>
           {item.description && (
             <ThemedText style={styles.description}>{item.description}</ThemedText>
           )}
@@ -405,14 +389,14 @@ export default function DastiKhataScreen() {
         <View>
           <Status isPaid={item.isPaid}>
             <StatusText isPaid={item.isPaid}>
-              {item.isPaid ? 'PAID' : 'UNPAID'}
+              {item.isPaid ? t.paid : t.unpaid}
             </StatusText>
           </Status>
         </View>
       </View>
       
       <View style={styles.actionsRow}>
-        <DastiKhataAmount isPaid={item.isPaid}>₹{item.amount.toFixed(2)}</DastiKhataAmount>
+        <DastiKhataAmount isPaid={item.isPaid}>{t.currency}{item.amount.toFixed(2)}</DastiKhataAmount>
         
         <TouchableOpacity 
           style={styles.deleteButton}
@@ -427,7 +411,7 @@ export default function DastiKhataScreen() {
           style={styles.payButton}
           onPress={() => markAsPaid(item.id)}
         >
-          <ThemedText style={styles.payButtonText}>Mark as Paid</ThemedText>
+          <ThemedText style={styles.payButtonText}>{t.markAsPaid}</ThemedText>
         </TouchableOpacity>
       )}
     </Card>
@@ -440,9 +424,9 @@ export default function DastiKhataScreen() {
   const renderEmptyState = () => (
     <ThemedView style={styles.emptyContainer}>
       <FontAwesome name="book" size={64} color="#ccc" style={styles.emptyIcon} />
-      <ThemedText style={styles.emptyText}>No Dasti Khata Yet</ThemedText>
+      <ThemedText style={styles.emptyText}>{t.noDastiKhataYet}</ThemedText>
       <ThemedText style={styles.emptySubtext}>
-        Tap the "+" button below to add a new Dasti Khata
+        {t.tapToAddDastiKhata}
       </ThemedText>
     </ThemedView>
   );
@@ -596,12 +580,12 @@ export default function DastiKhataScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>Dasti Khata</ThemedText>
-        <ThemedText style={styles.subtitle}>Manage your lent and borrowed money</ThemedText>
+        <ThemedText type="title" style={styles.title}>{t.dastiKhataTitle}</ThemedText>
+        <ThemedText style={styles.subtitle}>{t.dastiKhataSubtitle}</ThemedText>
       </ThemedView>
 
       <SearchInput
-        placeholder="Search by name..."
+        placeholder={t.searchByName}
         value={search}
         onChangeText={setSearch}
         placeholderTextColor="#999"
@@ -623,7 +607,7 @@ export default function DastiKhataScreen() {
               onPress={toggleExpandAll}
             >
               <ThemedText style={styles.expandAllText}>
-                {expandAll ? 'Collapse All' : 'Expand All'}
+                {expandAll ? t.collapseAll : t.expandAll}
               </ThemedText>
               <FontAwesome 
                 name={expandAll ? 'chevron-up' : 'chevron-down'} 
@@ -645,7 +629,7 @@ export default function DastiKhataScreen() {
               style={styles.loadMoreButton} 
               onPress={handleLoadMore}
             >
-              <ThemedText style={styles.loadMoreText}>Load More</ThemedText>
+              <ThemedText style={styles.loadMoreText}>{t.loadMore}</ThemedText>
             </TouchableOpacity>
           )}
         </View>
@@ -669,22 +653,22 @@ export default function DastiKhataScreen() {
       >
         <View style={styles.modalOverlay}>
           <ModalContainer>
-            <ModalTitle>Add New Dasti Khata</ModalTitle>
+            <ModalTitle>{t.addNewDastiKhata}</ModalTitle>
             <StyledInput
-              placeholder="Person's Name"
+              placeholder={t.personName}
               value={newName}
               onChangeText={setNewName}
               placeholderTextColor="#999"
             />
             <StyledInput
-              placeholder="Amount"
+              placeholder={t.amount}
               keyboardType="numeric"
               value={newAmount}
               onChangeText={(text: string) => setNewAmount(text.replace(/[^0-9.]/g, ''))}
               placeholderTextColor="#999"
             />
             <StyledInput
-              placeholder="Description (optional)"
+              placeholder={t.description}
               value={newDescription}
               onChangeText={setNewDescription}
               placeholderTextColor="#999"
@@ -701,13 +685,13 @@ export default function DastiKhataScreen() {
                 style={{ backgroundColor: '#f0f0f0' }}
                 onPress={() => setShowAddModal(false)}
               >
-                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>Cancel</ThemedText>
+                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>{t.cancel}</ThemedText>
               </ModalButton>
               <ModalButton 
                 style={{ backgroundColor: '#4A80F0' }}
                 onPress={handleAddDastiKhata}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Add</ThemedText>
+                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.add}</ThemedText>
               </ModalButton>
             </ButtonsRow>
           </ModalContainer>
@@ -724,7 +708,7 @@ export default function DastiKhataScreen() {
         <View style={styles.datePickerModalOverlay}>
           <View style={styles.datePickerModalContent}>
             <View style={styles.datePickerHeader}>
-              <ThemedText style={styles.datePickerTitle}>Select Date</ThemedText>
+              <ThemedText style={styles.datePickerTitle}>{t.selectDate}</ThemedText>
               <TouchableOpacity onPress={() => setShowDatePickerModal(false)}>
                 <FontAwesome name="times" size={20} color="#666" />
               </TouchableOpacity>
@@ -825,13 +809,13 @@ export default function DastiKhataScreen() {
                 style={[styles.datePickerButton, { backgroundColor: '#f0f0f0' }]}
                 onPress={() => setShowDatePickerModal(false)}
               >
-                <ThemedText style={{ color: '#333', fontWeight: '600' }}>Cancel</ThemedText>
+                <ThemedText style={{ color: '#333', fontWeight: '600' }}>{t.cancel}</ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.datePickerButton, { backgroundColor: '#4A80F0' }]}
                 onPress={() => setShowDatePickerModal(false)}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Confirm</ThemedText>
+                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.confirm}</ThemedText>
               </TouchableOpacity>
             </View>
           </View>
@@ -847,22 +831,22 @@ export default function DastiKhataScreen() {
       >
         <View style={styles.modalOverlay}>
           <ModalContainer style={{ padding: 20 }}>
-            <ModalTitle>Confirm Delete</ModalTitle>
+            <ModalTitle>{t.confirmDelete}</ModalTitle>
             <ThemedText style={styles.confirmText}>
-              Are you sure you want to delete this Dasti Khata?
+              {t.deleteConfirmText}
             </ThemedText>
             <ButtonsRow>
               <ModalButton
                 style={{ backgroundColor: '#f0f0f0' }}
                 onPress={() => setShowDeleteConfirm(false)}
               >
-                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>Cancel</ThemedText>
+                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>{t.cancel}</ThemedText>
               </ModalButton>
               <ModalButton
                 style={{ backgroundColor: '#e74c3c' }}
                 onPress={handleDelete}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Delete</ThemedText>
+                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.delete}</ThemedText>
               </ModalButton>
             </ButtonsRow>
           </ModalContainer>

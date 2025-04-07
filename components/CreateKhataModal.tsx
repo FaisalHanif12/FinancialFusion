@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Modal, TouchableOpacity, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
+import { Modal, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
+import { ThemedTextInput } from './ThemedTextInput';
 import { useKhata } from '../context/KhataContext';
+import { useAppContext } from '@/contexts/AppContext';
 
 // Define theme interface for type safety
 interface ThemeProps {
@@ -31,11 +33,11 @@ const ModalContainer = styled(ThemedView)`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const ModalContent = styled(ThemedView)`
+const ModalContent = styled(ThemedView).attrs({ cardStyle: true })`
   width: 90%;
   padding: 24px;
   border-radius: 16px;
-  background-color: ${(props: ThemeProps) => props.theme.colors.background};
+  background-color: ${(props: ThemeProps) => props.theme.colors.card};
   shadow-opacity: 0.2;
   shadow-radius: 8px;
   shadow-color: #000;
@@ -56,7 +58,7 @@ const Label = styled(ThemedText)`
   font-weight: 500;
 `;
 
-const StyledInput = styled(TextInput)`
+const StyledInput = styled(ThemedTextInput)`
   border-width: 1px;
   border-color: ${(props: ThemeProps) => props.theme.colors.border};
   border-radius: 8px;
@@ -64,13 +66,19 @@ const StyledInput = styled(TextInput)`
   font-size: 16px;
   margin-bottom: 16px;
   color: ${(props: ThemeProps) => props.theme.colors.text};
-  background-color: ${(props: ThemeProps) => props.theme.colors.card};
+  background-color: ${(props: ThemeProps) => props.theme.colors.background};
 `;
 
 const ButtonsContainer = styled(ThemedView)`
   flex-direction: row;
   justify-content: space-between;
   margin-top: 16px;
+  background-color: ${(props: ThemeProps) => props.theme.colors.card};
+`;
+
+const ButtonSeparator = styled(ThemedView)`
+  width: 16px;
+  background-color: ${(props: ThemeProps) => props.theme.colors.card};
 `;
 
 const CancelButton = styled(TouchableOpacity)`
@@ -82,7 +90,6 @@ const CancelButton = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   flex: 1;
-  margin-right: 8px;
 `;
 
 const CreateButton = styled(TouchableOpacity)`
@@ -92,7 +99,6 @@ const CreateButton = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   flex: 1;
-  margin-left: 8px;
 `;
 
 const CreateButtonText = styled(ThemedText)`
@@ -110,6 +116,7 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
   const [name, setName] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const { addKhata } = useKhata();
+  const { t, isUrdu } = useAppContext();
 
   // Format today's date as YYYY-MM-DD
   const today = new Date();
@@ -118,7 +125,7 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
   const handleCreateKhata = async () => {
     if (name.trim() === '' || totalAmount.trim() === '') {
       // Validate form
-      alert('Please fill in all fields');
+      alert(t.fillAllFields || 'Please fill in all fields');
       return;
     }
 
@@ -157,19 +164,19 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <ModalContainer>
           <ModalContent>
-            <Title>Create New Khata</Title>
+            <Title>{t.createKhata}</Title>
             
-            <Label>Name</Label>
+            <Label>{t.khataName}</Label>
             <StyledInput
-              placeholder="Enter name"
+              placeholder={t.khataName}
               value={name}
               onChangeText={setName}
               placeholderTextColor="#999"
             />
             
-            <Label>Total Amount</Label>
+            <Label>{t.amount}</Label>
             <StyledInput
-              placeholder="Enter amount"
+              placeholder={t.amount}
               value={totalAmount}
               onChangeText={(text: string) => setTotalAmount(text.replace(/[^0-9.]/g, ''))}
               keyboardType="numeric"
@@ -178,10 +185,11 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
             
             <ButtonsContainer>
               <CancelButton onPress={handleCancel}>
-                <CancelButtonText>Cancel</CancelButtonText>
+                <CancelButtonText>{t.cancel}</CancelButtonText>
               </CancelButton>
+              <ButtonSeparator />
               <CreateButton onPress={handleCreateKhata}>
-                <CreateButtonText>Create</CreateButtonText>
+                <CreateButtonText>{t.create}</CreateButtonText>
               </CreateButton>
             </ButtonsContainer>
           </ModalContent>

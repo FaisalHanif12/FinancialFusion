@@ -8,6 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useKhata, Expense, Transaction } from '@/context/KhataContext';
 import styled from 'styled-components/native';
 import CustomAlert from '../components/CustomAlert';
+import { useAppContext } from '@/contexts/AppContext';
 
 // Define theme interface for type safety
 interface ThemeProps {
@@ -236,12 +237,13 @@ interface TransactionGroup {
 }
 
 export default function KhataScreen() {
-  const params = useLocalSearchParams();
-  const id = params.id as string;
-  const action = params.action as string | undefined;
-  
   const router = useRouter();
-  const { getKhata, addExpense, addAmount, deleteExpense, deleteTransaction } = useKhata();
+  const params = useLocalSearchParams();
+  const id = (params.id as string) || '';
+  const action = params.action as string | undefined;
+  const { khatas, loading, getKhata, addAmount, deleteExpense, deleteTransaction } = useKhata();
+  const { t, isUrdu } = useAppContext();
+  
   const [khata, setKhata] = useState(getKhata(id));
   const [activeTab, setActiveTab] = useState<'expenses' | 'history'>(
     action === 'history' ? 'history' : 'expenses'
@@ -407,12 +409,12 @@ export default function KhataScreen() {
   if (!khata) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText style={styles.errorText}>Khata not found</ThemedText>
+        <ThemedText style={[styles.errorText, isUrdu && styles.rtlText]}>{t.khataNotFound}</ThemedText>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
+          <ThemedText style={styles.backButtonText}>{t.back}</ThemedText>
         </TouchableOpacity>
       </ThemedView>
     );
@@ -445,7 +447,7 @@ export default function KhataScreen() {
 
   const handleAddAmountSubmit = async () => {
     if (!amountToAdd || parseFloat(amountToAdd) <= 0) {
-      showAlert('Error', 'Please enter a valid amount', 'error');
+      showAlert(t.error, t.enterValidAmount, 'error');
       return;
     }
 
@@ -470,9 +472,9 @@ export default function KhataScreen() {
       setShowAddAmountModal(false);
 
       // Show success message
-      showAlert('Success', 'Amount added successfully!', 'success');
+      showAlert(t.success, t.amountAddedSuccess, 'success');
     } catch (error) {
-      showAlert('Error', 'Failed to add amount', 'error');
+      showAlert(t.error, t.failedToAddAmount, 'error');
     }
   };
 
@@ -500,9 +502,9 @@ export default function KhataScreen() {
       }
       
       // Show success message
-      showAlert('Success', 'Item deleted successfully', 'success');
+      showAlert(t.success, t.itemDeletedSuccess, 'success');
     } catch (error) {
-      showAlert('Error', 'Failed to delete item', 'error');
+      showAlert(t.error, t.failedToDeleteItem, 'error');
     }
 
     // Reset and close confirmation modal
@@ -514,10 +516,10 @@ export default function KhataScreen() {
   const renderExpenseItem = ({ item }: { item: Expense }) => (
     <ExpenseItem>
       <ExpenseHeader>
-        <ThemedText style={styles.expenseSource}>{item.source}</ThemedText>
+        <ThemedText style={[styles.expenseSource, isUrdu && styles.rtlText]} colorType="text">{item.source}</ThemedText>
         <ExpenseAmount style={styles.expenseAmount}>-₹{item.amount.toFixed(0)}</ExpenseAmount>
       </ExpenseHeader>
-      <ThemedText style={styles.expenseDate}>{item.date}</ThemedText>
+      <ThemedText style={[styles.expenseDate, isUrdu && styles.rtlText]}>{item.date}</ThemedText>
       
       {/* Delete icon */}
       <TouchableOpacity 
@@ -533,15 +535,15 @@ export default function KhataScreen() {
   const renderHistoryItem = ({ item }: { item: Transaction }) => (
     <HistoryItem>
       <ExpenseHeader>
-        <ThemedText style={styles.expenseSource}>
+        <ThemedText style={[styles.expenseSource, isUrdu && styles.rtlText]} colorType="text">
           {item.description}
         </ThemedText>
         <ExpenseAmount style={item.type === 'EXPENSE' ? styles.expenseAmount : styles.addAmount}>
           {item.type === 'EXPENSE' ? '-' : '+'} ₹{item.amount.toFixed(0)}
         </ExpenseAmount>
       </ExpenseHeader>
-      <ThemedText style={styles.expenseDate}>{item.date}</ThemedText>
-      <ThemedText style={styles.balanceText}>Balance: ₹{item.balanceAfter.toFixed(0)}</ThemedText>
+      <ThemedText style={[styles.expenseDate, isUrdu && styles.rtlText]}>{item.date}</ThemedText>
+      <ThemedText style={[styles.balanceText, isUrdu && styles.rtlText]}>{t.availableBalance}: ₹{item.balanceAfter.toFixed(0)}</ThemedText>
        
       {/* Delete icon */}
       <TouchableOpacity 
@@ -556,9 +558,9 @@ export default function KhataScreen() {
   const renderEmptyExpenses = () => (
     <ThemedView style={styles.emptyContainer}>
       <FontAwesome name="money" size={48} color="#ccc" style={styles.emptyIcon} />
-      <ThemedText style={styles.emptyText}>No Expenses Yet</ThemedText>
-      <ThemedText style={styles.emptySubtext}>
-        Tap the "Add Expense" button to record your first expense
+      <ThemedText style={[styles.emptyText, isUrdu && styles.rtlText]}>{t.noExpensesYet}</ThemedText>
+      <ThemedText style={[styles.emptySubtext, isUrdu && styles.rtlText]}>
+        {t.tapToAddExpense}
       </ThemedText>
     </ThemedView>
   );
@@ -566,9 +568,9 @@ export default function KhataScreen() {
   const renderEmptyHistory = () => (
     <ThemedView style={styles.emptyContainer}>
       <FontAwesome name="history" size={48} color="#ccc" style={styles.emptyIcon} />
-      <ThemedText style={styles.emptyText}>No Transaction History</ThemedText>
-      <ThemedText style={styles.emptySubtext}>
-        Transaction history will appear here as you add amounts and expenses
+      <ThemedText style={[styles.emptyText, isUrdu && styles.rtlText]}>{t.noTransactionHistory || "No Transaction History"}</ThemedText>
+      <ThemedText style={[styles.emptySubtext, isUrdu && styles.rtlText]}>
+        {t.transactionHistoryText || "Transaction history will appear here as you add amounts and expenses"}
       </ThemedText>
     </ThemedView>
   );
@@ -729,10 +731,10 @@ export default function KhataScreen() {
                 color="#666" 
                 style={styles.expandIcon}
               />
-              <MonthTitle>{item.title}</MonthTitle>
+              <MonthTitle style={isUrdu && styles.rtlText}>{item.title}</MonthTitle>
             </View>
-            <ThemedText style={styles.monthTotal}>
-              Total: ₹{item.data.reduce((total, expense) => total + expense.amount, 0).toFixed(0)}
+            <ThemedText style={[styles.monthTotal, isUrdu && styles.rtlText]}>
+              {t.amount}: ₹{item.data.reduce((total, expense) => total + expense.amount, 0).toFixed(0)}
             </ThemedText>
           </MonthHeader>
         </TouchableOpacity>
@@ -742,10 +744,10 @@ export default function KhataScreen() {
             {item.data.map(expense => (
               <ExpenseItem key={expense.id}>
                 <ExpenseHeader>
-                  <ThemedText style={styles.expenseSource}>{expense.source}</ThemedText>
+                  <ThemedText style={[styles.expenseSource, isUrdu && styles.rtlText]} colorType="text">{expense.source}</ThemedText>
                   <ExpenseAmount style={styles.expenseAmount}>-₹{expense.amount.toFixed(0)}</ExpenseAmount>
                 </ExpenseHeader>
-                <ThemedText style={styles.expenseDate}>{expense.date}</ThemedText>
+                <ThemedText style={[styles.expenseDate, isUrdu && styles.rtlText]}>{expense.date}</ThemedText>
                 
                 {/* Delete icon */}
                 <TouchableOpacity 
@@ -777,11 +779,11 @@ export default function KhataScreen() {
                 color="#666" 
                 style={styles.expandIcon}
               />
-              <MonthTitle>{item.title}</MonthTitle>
+              <MonthTitle style={isUrdu && styles.rtlText}>{item.title}</MonthTitle>
             </View>
-            <ThemedText style={styles.monthTotal}>
+            <ThemedText style={[styles.monthTotal, isUrdu && styles.rtlText]}>
               {/* Show net change for the month */}
-              Net: {getMonthlyNetChange(item.data)}
+              {t.net || "Net"}: {getMonthlyNetChange(item.data)}
             </ThemedText>
           </MonthHeader>
         </TouchableOpacity>
@@ -791,15 +793,15 @@ export default function KhataScreen() {
             {item.data.map(transaction => (
               <HistoryItem key={transaction.id}>
                 <ExpenseHeader>
-                  <ThemedText style={styles.expenseSource}>
+                  <ThemedText style={[styles.expenseSource, isUrdu && styles.rtlText]} colorType="text">
                     {transaction.description}
                   </ThemedText>
                   <ExpenseAmount style={transaction.type === 'EXPENSE' ? styles.expenseAmount : styles.addAmount}>
                     {transaction.type === 'EXPENSE' ? '-' : '+'} ₹{transaction.amount.toFixed(0)}
                   </ExpenseAmount>
                 </ExpenseHeader>
-                <ThemedText style={styles.expenseDate}>{transaction.date}</ThemedText>
-                <ThemedText style={styles.balanceText}>Balance: ₹{transaction.balanceAfter.toFixed(0)}</ThemedText>
+                <ThemedText style={[styles.expenseDate, isUrdu && styles.rtlText]}>{transaction.date}</ThemedText>
+                <ThemedText style={[styles.balanceText, isUrdu && styles.rtlText]}>{t.availableBalance}: ₹{transaction.balanceAfter.toFixed(0)}</ThemedText>
                 
                 {/* Delete icon */}
                 <TouchableOpacity 
@@ -839,7 +841,7 @@ export default function KhataScreen() {
     return (
       <LoadMoreButton onPress={handleLoadMore}>
         <FontAwesome name="arrow-down" size={14} color="#4A80F0" />
-        <LoadMoreText>Load More</LoadMoreText>
+        <LoadMoreText style={isUrdu && styles.rtlText}>{t.loadMore}</LoadMoreText>
       </LoadMoreButton>
     );
   };
@@ -852,7 +854,7 @@ export default function KhataScreen() {
     
     return (
       <ThemedView style={styles.loadingContainer}>
-        <ThemedText style={styles.loadingText}>Loading more...</ThemedText>
+        <ThemedText style={[styles.loadingText, isUrdu && styles.rtlText]}>{t.loading}</ThemedText>
       </ThemedView>
     );
   };
@@ -905,10 +907,18 @@ export default function KhataScreen() {
           color="#4A80F0" 
         />
         <ThemedText style={styles.expandAllText}>
-          {anyExpanded ? "Collapse All" : "Expand All"}
+          {anyExpanded ? t.collapseAll : t.expandAll}
         </ThemedText>
       </TouchableOpacity>
     );
+  };
+
+  // Add these styles to properly format text in Urdu mode
+  const getTextStyle = (baseStyle?: any) => {
+    return [
+      baseStyle,
+      isUrdu && styles.rtlText
+    ];
   };
 
   return (
@@ -916,19 +926,19 @@ export default function KhataScreen() {
       <Stack.Screen 
         options={{
           title: khata.name,
-          headerBackTitle: 'Back'
+          headerBackTitle: t.back
         }}
       />
-      <ThemedView style={styles.container}>
+      <ThemedView style={[styles.container, isUrdu && styles.rtlContainer]}>
         <Card>
           <AddAmountIcon onPress={handleAddAmount}>
              <FontAwesome name="plus-circle" size={20} color="#22A45D" />
           </AddAmountIcon>
-          <ThemedText style={styles.cardLabel}>Total Amount</ThemedText>
+          <ThemedText style={styles.cardLabel}>{t.amount}</ThemedText>
           <AmountText negative={khata.totalAmount < 0}>
             {khata.totalAmount < 0 ? '-' : ''}₹{Math.abs(khata.totalAmount).toFixed(0)}
           </AmountText>
-          <ThemedText style={styles.createdOn}>Created on {khata.date}</ThemedText>
+          <ThemedText style={styles.createdOn}>{t.created} {khata.date}</ThemedText>
         </Card>
 
         <TabsContainer>
@@ -936,13 +946,13 @@ export default function KhataScreen() {
             active={activeTab === 'expenses'} 
             onPress={() => setActiveTab('expenses')}
           >
-            <TabText active={activeTab === 'expenses'}>Expenses</TabText>
+            <TabText active={activeTab === 'expenses'}>{t.expenses}</TabText>
           </Tab>
           <Tab 
             active={activeTab === 'history'} 
             onPress={() => setActiveTab('history')}
           >
-            <TabText active={activeTab === 'history'}>History</TabText>
+            <TabText active={activeTab === 'history'}>{t.history}</TabText>
           </Tab>
         </TabsContainer>
 
@@ -1005,21 +1015,23 @@ export default function KhataScreen() {
         >
           <View style={styles.modalOverlay}>
             <ModalContainer>
-              <ModalTitle>Add Amount</ModalTitle>
+              <ModalTitle style={getTextStyle()}>{t.addedAmount}</ModalTitle>
               <StyledInput
-                placeholder="Enter amount"
+                placeholder={t.enterAmount}
                 keyboardType="numeric"
                 value={amountToAdd}
                 onChangeText={(text: string) => setAmountToAdd(text.replace(/[^0-9.]/g, ''))}
                 placeholderTextColor="#999"
+                style={isUrdu && styles.rtlText}
               />
               
               {/* Description Input Field */}
               <StyledInput
-                placeholder="Enter description/reason (optional)"
+                placeholder={t.description}
                 value={amountDescription}
                 onChangeText={setAmountDescription}
                 placeholderTextColor="#999"
+                style={isUrdu && styles.rtlText}
               />
               
               {/* Date Picker UI */}
@@ -1028,7 +1040,7 @@ export default function KhataScreen() {
                 onPress={() => setShowDatePickerModal(true)}
               >
                 <FontAwesome name="calendar" size={18} color="#666" />
-                <DateText>Date: {selectedDate.toISOString().split('T')[0]} (Tap to change)</DateText>
+                <DateText style={isUrdu && styles.rtlText}>{t.date}: {formattedDate} ({t.tapToChange})</DateText>
               </DateContainer>
               
               <View style={styles.buttonContainer}>
@@ -1036,13 +1048,13 @@ export default function KhataScreen() {
                   style={styles.cancelButton}
                   onPress={() => setShowAddAmountModal(false)}
                 >
-                  <ThemedText style={{ fontWeight: '600', color: '#444444' }}>Cancel</ThemedText>
+                  <ThemedText style={[{ fontWeight: '600', color: '#444444' }, isUrdu && styles.rtlText]}>{t.cancel}</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.addButton}
                   onPress={handleAddAmountSubmit}
                 >
-                  <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Add</ThemedText>
+                  <ThemedText style={[{ color: 'white', fontWeight: 'bold' }, isUrdu && styles.rtlText]}>{t.add}</ThemedText>
                 </TouchableOpacity>
               </View>
             </ModalContainer>
@@ -1059,7 +1071,7 @@ export default function KhataScreen() {
           <View style={styles.datePickerModalOverlay}>
             <View style={styles.datePickerModalContent}>
               <View style={styles.datePickerHeader}>
-                <ThemedText style={styles.datePickerTitle}>Select Date</ThemedText>
+                <ThemedText style={getTextStyle(styles.datePickerTitle)}>{t.selectDate}</ThemedText>
                 <TouchableOpacity onPress={() => setShowDatePickerModal(false)}>
                   <FontAwesome name="close" size={24} color="#666" />
                 </TouchableOpacity>
@@ -1132,13 +1144,13 @@ export default function KhataScreen() {
                   style={styles.datePickerButton}
                   onPress={() => setShowDatePickerModal(false)}
                 >
-                  <ThemedText style={styles.datePickerButtonText}>Cancel</ThemedText>
+                  <ThemedText style={getTextStyle(styles.datePickerButtonText)}>{t.cancel}</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.datePickerButton, styles.datePickerConfirmButton]}
                   onPress={() => setShowDatePickerModal(false)}
                 >
-                  <ThemedText style={styles.datePickerConfirmText}>Confirm</ThemedText>
+                  <ThemedText style={getTextStyle(styles.datePickerConfirmText)}>{t.confirm}</ThemedText>
                 </TouchableOpacity>
               </View>
             </View>
@@ -1154,9 +1166,9 @@ export default function KhataScreen() {
         >
           <View style={styles.modalOverlay}>
             <ModalContainer>
-              <ModalTitle>Confirm Delete</ModalTitle>
-              <ThemedText style={styles.deleteConfirmText}>
-                Are you sure you want to delete this item? This action cannot be undone.
+              <ModalTitle style={getTextStyle()}>{t.confirmDelete}</ModalTitle>
+              <ThemedText style={getTextStyle(styles.deleteConfirmText)}>
+                {t.deleteConfirmText}
               </ThemedText>
               
               <ButtonsRow>
@@ -1164,13 +1176,13 @@ export default function KhataScreen() {
                   style={styles.cancelButton}
                   onPress={() => setShowDeleteConfirmModal(false)}
                 >
-                  <ThemedText style={{ fontWeight: '600', color: '#444444' }}>Cancel</ThemedText>
+                  <ThemedText style={[{ fontWeight: '600', color: '#444444' }, isUrdu && styles.rtlText]}>{t.cancel}</ThemedText>
                 </ModalButton>
                 <ModalButton 
                   style={styles.deleteButton}
                   onPress={confirmDelete}
                 >
-                  <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Delete</ThemedText>
+                  <ThemedText style={[{ color: 'white', fontWeight: 'bold' }, isUrdu && styles.rtlText]}>{t.delete}</ThemedText>
                 </ModalButton>
               </ButtonsRow>
             </ModalContainer>
@@ -1194,6 +1206,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  rtlContainer: {
+    direction: 'rtl',
+  },
+  rtlText: {
+    textAlign: 'right',
+    ...(Platform.OS === 'ios' ? { fontFamily: 'Arial' } : { fontFamily: 'sans-serif' }),
+    lineHeight: 24,
   },
   cardLabel: {
     fontSize: 14,
@@ -1226,7 +1246,6 @@ const styles = StyleSheet.create({
   expenseSource: {
     fontSize: 17,
     fontWeight: '400',
-    color: '#ffffff',  // Changed from #333333 to white
   },
   expenseDate: {
     fontSize: 13,

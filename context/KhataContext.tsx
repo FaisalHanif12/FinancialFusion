@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppContext } from '@/contexts/AppContext';
 
 // Define the Khata type
 export interface Expense {
@@ -61,7 +62,8 @@ interface KhataProviderProps {
 export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   const [khatas, setKhatas] = useState<Khata[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { t } = useAppContext();
+  
   // Load khatas from AsyncStorage on initial render
   useEffect(() => {
     const loadKhatas = async () => {
@@ -71,14 +73,14 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
           setKhatas(JSON.parse(storedKhatas));
         }
       } catch (error) {
-        console.error('Failed to load khatas from storage', error);
+        console.error(`${t.error}: ${t.failedToLoadKhatas}`, error);
       } finally {
         setLoading(false);
       }
     };
 
     loadKhatas();
-  }, []);
+  }, [t]);
 
   // Save khatas to AsyncStorage whenever they change
   useEffect(() => {
@@ -86,7 +88,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
       try {
         await AsyncStorage.setItem('khatas', JSON.stringify(khatas));
       } catch (error) {
-        console.error('Failed to save khatas to storage', error);
+        console.error(`${t.error}: ${t.failedToSaveKhatas}`, error);
       }
     };
 
@@ -94,7 +96,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
     if (!loading) {
       saveKhatas();
     }
-  }, [khatas, loading]);
+  }, [khatas, loading, t]);
 
   // Add a new khata
   const addKhata = async (khata: Omit<Khata, 'id' | 'expenses' | 'transactions'>) => {
@@ -106,7 +108,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
         id: Date.now().toString(),
         date: khata.date,
         type: 'ADD_AMOUNT',
-        description: 'Initial amount',
+        description: t.initialAmount,
         amount: khata.totalAmount,
         balanceAfter: khata.totalAmount
       }],
@@ -151,7 +153,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   };
 
   // Add amount to a khata
-  const addAmount = async (khataId: string, amount: number, description: string = 'Added amount', date: string = new Date().toISOString().split('T')[0]) => {
+  const addAmount = async (khataId: string, amount: number, description: string = t.addedAmount, date: string = new Date().toISOString().split('T')[0]) => {
     setKhatas((prevKhatas) =>
       prevKhatas.map((khata) => {
         if (khata.id === khataId) {
@@ -278,7 +280,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
 
 // Custom hook to use the khata context
 export const useKhata = () => {
-  const context = React.useContext(KhataContext);
+  const context = useContext(KhataContext);
   if (context === undefined) {
     throw new Error('useKhata must be used within a KhataProvider');
   }

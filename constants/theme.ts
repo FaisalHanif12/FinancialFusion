@@ -1,11 +1,11 @@
 export const lightTheme = {
   colors: {
-    background: '#FFFFFF',
-    text: '#000000',
+    background: '#F8F9FA',
+    text: '#202124',
     primary: '#4A80F0',
-    secondary: '#6E7A8A',
-    card: '#F5F7FA',
-    border: '#E1E4E8',
+    secondary: '#5F6368',
+    card: '#FFFFFF',
+    border: '#DADCE0',
   },
 };
 

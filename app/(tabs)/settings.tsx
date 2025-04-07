@@ -52,45 +52,14 @@ const ToggleRow = styled(View)`
   padding: 10px 0;
 `;
 
-// Add translation data
-const translations = {
-  en: {
-    settings: 'Settings',
-    managePreferences: 'Manage your app preferences',
-    language: 'Language',
-    languageDesc: 'Switch between English and Urdu',
-    english: 'English',
-    urdu: 'Urdu',
-    theme: 'Theme',
-    themeDesc: 'Toggle between light and dark mode',
-    dark: 'Dark',
-    light: 'Light'
-  },
-  ur: {
-    settings: 'ترتیبات',
-    managePreferences: 'اپنی ایپ کی ترجیحات کا نظم کریں',
-    language: 'زبان',
-    languageDesc: 'انگریزی اور اردو کے درمیان سوئچ کریں',
-    english: 'انگریزی',
-    urdu: 'اردو',
-    theme: 'تھیم',
-    themeDesc: 'لائٹ اور ڈارک موڈ کے درمیان ٹوگل کریں',
-    dark: 'ڈارک',
-    light: 'لائٹ'
-  }
-};
-
 export default function SettingsScreen() {
   // Use our app context for state management
-  const { isDark, isUrdu, toggleTheme, toggleLanguage, language } = useAppContext();
-
-  // Get translated text based on current language
-  const t = translations[language];
+  const { isDark, isUrdu, toggleTheme, toggleLanguage, t } = useAppContext();
 
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>{t.settings}</ThemedText>
+        <ThemedText type="title" style={styles.title}>{t.settingsTitle}</ThemedText>
         <ThemedText style={styles.subtitle}>{t.managePreferences}</ThemedText>
       </ThemedView>
 
