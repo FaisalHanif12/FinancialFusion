@@ -592,11 +592,11 @@ export default function KhataScreen() {
       groups[monthKey].push(item);
     });
     
-    // Sort items within each month group by date in descending order (newest first)
-    // so that recent expenses appear at the top
+    // Sort items within each month group by date in ascending order (oldest first)
+    // so that newer expenses appear at the bottom
     Object.keys(groups).forEach(monthKey => {
       groups[monthKey].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
+        new Date(a.date).getTime() - new Date(b.date).getTime()
       );
     });
     
@@ -643,11 +643,11 @@ export default function KhataScreen() {
       groups[monthKey].push(item);
     });
     
-    // Sort items within each month group by date in descending order (newest first)
-    // so that recent transactions appear at the top
+    // Sort items within each month group by date in ascending order (oldest first)
+    // so that newer transactions appear at the bottom
     Object.keys(groups).forEach(monthKey => {
       groups[monthKey].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
+        new Date(a.date).getTime() - new Date(b.date).getTime()
       );
     });
     
