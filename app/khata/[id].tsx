@@ -402,6 +402,7 @@ export default function KhataScreen() {
   // Pagination states
   const [visibleMonths, setVisibleMonths] = useState(6);
   const [loadingMore, setLoadingMore] = useState(false);
+   const [showAllData, setShowAllData] = useState(false);
   
   // State to track expanded month sections (empty by default - all collapsed)
   const [expandedMonths, setExpandedMonths] = useState<{[key: string]: boolean}>({});
@@ -446,17 +447,25 @@ export default function KhataScreen() {
   };
 
   const handleAddAmountSubmit = async () => {
-    if (!amountToAdd || parseFloat(amountToAdd) <= 0) {
-      showAlert(t.error, t.enterValidAmount, 'error');
+    // Validate input fields
+    if (!amountToAdd) {
+      showAlert(t.error || 'Error', t.pleaseEnterAmount || 'Please enter an amount', 'error');
       return;
     }
 
-    const amount = parseFloat(amountToAdd);
-    const description = amountDescription.trim() ? amountDescription.trim() : `${khata.name}`;
-    
+    if (isNaN(parseFloat(amountToAdd)) || parseFloat(amountToAdd) <= 0) {
+      showAlert(t.error || 'Error', t.pleaseEnterValidAmount || 'Please enter a valid amount', 'error');
+      return;
+    }
+
+    if (!amountDescription) {
+      showAlert(t.error || 'Error', t.pleaseEnterDescription || 'Please enter a description', 'error');
+      return;
+    }
+
     try {
-      // Use the formatted date from the date picker
-      await addAmount(khata.id, amount, description, formattedDate);
+      const amount = parseFloat(amountToAdd);
+      await addAmount(khata.id, amount, amountDescription, formattedDate);
       
       // Force refresh khata data immediately to ensure UI updates
       const updatedKhata = getKhata(khata.id);
@@ -472,9 +481,10 @@ export default function KhataScreen() {
       setShowAddAmountModal(false);
 
       // Show success message
-      showAlert(t.success, t.amountAddedSuccess, 'success');
+      showAlert(t.success || 'Success', t.amountAddedSuccess || 'Amount added successfully', 'success');
     } catch (error) {
-      showAlert(t.error, t.failedToAddAmount, 'error');
+      console.error('Error adding amount:', error);
+      showAlert(t.error || 'Error', t.failedToAddAmount || 'Failed to add amount', 'error');
     }
   };
 
@@ -686,8 +696,16 @@ export default function KhataScreen() {
     
     const monthGroups = groupExpensesByMonth(khata.expenses);
     
-    // Return only the number of months based on pagination
-    return monthGroups.slice(0, visibleMonths);
+    // Always show only the latest 6 months by default
+    const latestSixMonths = monthGroups.slice(0, 6);
+    const olderMonths = monthGroups.slice(6);
+    
+    // If showing all data, append older months after the latest 6
+    if (showAllData) {
+      return [...latestSixMonths, ...olderMonths].slice(0, visibleMonths);
+    }
+    
+    return latestSixMonths;
   };
   
   // Get history grouped by month with pagination
@@ -698,8 +716,16 @@ export default function KhataScreen() {
     
     const monthGroups = groupTransactionsByMonth(khata.transactions);
     
-    // Return only the number of months based on pagination
-    return monthGroups.slice(0, visibleMonths);
+    // Always show only the latest 6 months by default
+    const latestSixMonths = monthGroups.slice(0, 6);
+    const olderMonths = monthGroups.slice(6);
+    
+    // If showing all data, append older months after the latest 6
+    if (showAllData) {
+      return [...latestSixMonths, ...olderMonths].slice(0, visibleMonths);
+    }
+    
+    return latestSixMonths;
   };
   
   // Check if there are more months to load
@@ -710,7 +736,22 @@ export default function KhataScreen() {
       ? groupExpensesByMonth(khata.expenses).length 
       : groupTransactionsByMonth(khata.transactions).length;
       
-    return totalMonths > visibleMonths;
+    if (showAllData) {
+      return totalMonths > visibleMonths;
+    } else {
+      return false; // When showing only 6 months, we use hasOlderData instead
+    }
+  };
+  
+  // Check if there are more than 6 months of data
+  const hasOlderData = () => {
+    if (!khata) return false;
+    
+    const totalMonths = activeTab === 'expenses' 
+      ? groupExpensesByMonth(khata.expenses).length 
+      : groupTransactionsByMonth(khata.transactions).length;
+      
+    return totalMonths > 6;
   };
   
   // Load more months
@@ -842,16 +883,31 @@ export default function KhataScreen() {
   
   // Render the load more button
   const renderLoadMoreButton = () => {
-    if (!hasMoreMonths() || loadingMore) {
+    if (loadingMore) {
       return null;
     }
     
-    return (
-      <LoadMoreButton onPress={handleLoadMore}>
-        <FontAwesome name="arrow-down" size={14} color="#4A80F0" />
-        <LoadMoreText style={isUrdu && styles.rtlText}>{t.loadMore}</LoadMoreText>
-      </LoadMoreButton>
-    );
+    // Show "Load Previous Data" button when not showing all data and there's older data
+    if (!showAllData && hasOlderData()) {
+      return (
+        <LoadMoreButton onPress={() => setShowAllData(true)}>
+          <FontAwesome name="arrow-down" size={14} color="#4A80F0" />
+          <LoadMoreText style={isUrdu && styles.rtlText}>{t.loadPreviousData || 'Load Previous Data'}</LoadMoreText>
+        </LoadMoreButton>
+      );
+    }
+    
+    // Show "Load More" button when showing all data and there are more months to load
+    if (showAllData && hasMoreMonths()) {
+      return (
+        <LoadMoreButton onPress={handleLoadMore}>
+          <FontAwesome name="arrow-down" size={14} color="#4A80F0" />
+          <LoadMoreText style={isUrdu && styles.rtlText}>{t.loadMore}</LoadMoreText>
+        </LoadMoreButton>
+      );
+    }
+    
+    return null;
   };
   
   // Render loading indicator

@@ -8,6 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import styled from 'styled-components/native';
 import { useAppContext } from '@/contexts/AppContext';
+import CustomAlert from '@/app/components/CustomAlert';
 
 // Define theme interface for type safety
 interface ThemeProps {
@@ -299,6 +300,12 @@ export default function DastiKhataScreen() {
   const [newAmount, setNewAmount] = useState('');
   const [newDescription, setNewDescription] = useState('');
   
+  // Tab navigation state
+  const [activeTab, setActiveTab] = useState('unpaid'); // 'unpaid' or 'paid'
+  
+  // Pagination state
+  const [visibleItems, setVisibleItems] = useState(30);
+  
   // Date picker state variables
   const todayUTC = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
   const [selectedDate, setSelectedDate] = useState(todayUTC);
@@ -310,6 +317,7 @@ export default function DastiKhataScreen() {
   const [expandedMonths, setExpandedMonths] = useState<string[]>([]);
   const [expandAll, setExpandAll] = useState(false);
   const [visibleMonths, setVisibleMonths] = useState(6);
+  const [showAllData, setShowAllData] = useState(false);
   
   // Get translations from our app context
   const { t } = useAppContext();
@@ -350,13 +358,29 @@ export default function DastiKhataScreen() {
     setShowDeleteConfirm(false);
   };
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as const });
+
+  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info' = 'error') => {
+    setAlertConfig({ title, message, type });
+    setAlertVisible(true);
+  };
+
   const handleAddDastiKhata = () => {
-    if (!newName.trim() || !newAmount.trim()) {
+    if (!newName.trim() && !newAmount.trim()) {
+      showAlert(t.error || 'Error', t.pleaseCompleteAllFields || 'Please complete all fields');
+      return;
+    } else if (!newName.trim()) {
+      showAlert(t.error || 'Error', t.pleaseEnterName || 'Please enter a name');
+      return;
+    } else if (!newAmount.trim()) {
+      showAlert(t.error || 'Error', t.pleaseEnterAmount || 'Please enter an amount');
       return;
     }
     
     const parsedAmount = parseFloat(newAmount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      showAlert(t.error || 'Error', t.pleaseEnterValidAmount || 'Please enter a valid amount');
       return;
     }
     
@@ -374,6 +398,7 @@ export default function DastiKhataScreen() {
     setNewAmount('');
     setNewDescription('');
     setShowAddModal(false);
+    showAlert(t.success || 'Success', t.entryAddedSuccessfully || 'Entry added successfully', 'success');
   };
 
   const renderDastiKhataItem = ({ item }: { item: DastiKhata }) => (
@@ -417,9 +442,26 @@ export default function DastiKhataScreen() {
     </Card>
   );
 
-  const filteredKhatas = dastiKhatas.filter(khata =>
-    khata.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter khatas by search term and payment status
+  const filteredKhatas = dastiKhatas.filter(khata => {
+    const matchesSearch = khata.name.toLowerCase().includes(search.toLowerCase());
+    const matchesTab = activeTab === 'paid' ? khata.isPaid : !khata.isPaid;
+    return matchesSearch && matchesTab;
+  });
+  
+  // Apply pagination to filtered khatas
+  const paginatedKhatas = filteredKhatas.slice(0, visibleItems);
+  const hasMoreItems = filteredKhatas.length > visibleItems;
+  
+  // Load more items
+  const handleLoadMoreItems = () => {
+    setVisibleItems(prev => prev + 30);
+  };
+  
+  // Reset pagination when tab changes
+  useEffect(() => {
+    setVisibleItems(30);
+  }, [activeTab]);
 
   const renderEmptyState = () => (
     <ThemedView style={styles.emptyContainer}>
@@ -480,8 +522,13 @@ export default function DastiKhataScreen() {
   const groupByMonth = () => {
     const groups: { [key: string]: DastiKhata[] } = {};
 
+    // Filter by payment status first
+    const filteredByStatus = dastiKhatas.filter(khata => 
+      activeTab === 'paid' ? khata.isPaid : !khata.isPaid
+    );
+    
     // Sort by date, newest first
-    const sortedKhatas = [...dastiKhatas].sort((a, b) => 
+    const sortedKhatas = [...filteredByStatus].sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
@@ -495,8 +542,24 @@ export default function DastiKhataScreen() {
       
       groups[monthYear].push(khata);
     });
-
-    return groups;
+    
+    // Convert to array of entries and sort by date (newest first)
+    const sortedEntries = Object.entries(groups).sort((a, b) => {
+      const [yearMonthA] = a[0].split('-');
+      const [yearMonthB] = b[0].split('-');
+      return yearMonthB.localeCompare(yearMonthA);
+    });
+    
+    // Always show only the latest 6 months by default
+    const latestSixMonths = sortedEntries.slice(0, 6);
+    const olderMonths = sortedEntries.slice(6);
+    
+    // If showing all data, append older months after the latest 6
+    if (showAllData) {
+      return Object.fromEntries([...latestSixMonths, ...olderMonths]);
+    }
+    
+    return Object.fromEntries(latestSixMonths);
   };
 
   // Toggle expanded state for a month
@@ -576,6 +639,29 @@ export default function DastiKhataScreen() {
   const monthEntries = Object.entries(monthData);
   const visibleMonthEntries = monthEntries.slice(0, visibleMonths);
   const hasMoreMonths = monthEntries.length > visibleMonths;
+  
+  // Check if there are more than 6 months of data
+  const hasOlderData = () => {
+    const groups: { [key: string]: DastiKhata[] } = {};
+    
+    // Filter by payment status first
+    const filteredByStatus = dastiKhatas.filter(khata => 
+      activeTab === 'paid' ? khata.isPaid : !khata.isPaid
+    );
+    
+    filteredByStatus.forEach(khata => {
+      const date = new Date(khata.date);
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!groups[monthYear]) {
+        groups[monthYear] = [];
+      }
+      
+      groups[monthYear].push(khata);
+    });
+    
+    return Object.keys(groups).length > 6;
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -590,14 +676,42 @@ export default function DastiKhataScreen() {
         onChangeText={setSearch}
         placeholderTextColor="#999"
       />
+      
+      {/* Tab Navigation */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === 'unpaid' && styles.activeTabButton]}
+          onPress={() => setActiveTab('unpaid')}
+        >
+          <ThemedText style={[styles.tabText, activeTab === 'unpaid' && styles.activeTabText]}>
+            {t.unpaid || 'Unpaid'}
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === 'paid' && styles.activeTabButton]}
+          onPress={() => setActiveTab('paid')}
+        >
+          <ThemedText style={[styles.tabText, activeTab === 'paid' && styles.activeTabText]}>
+            {t.paid || 'Paid'}
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
 
       {search ? (
         <FlatList
-          data={filteredKhatas}
+          data={paginatedKhatas}
           keyExtractor={item => item.id}
           renderItem={renderDastiKhataItem}
           contentContainerStyle={styles.listContainer}
           ListEmptyComponent={renderEmptyState}
+          ListFooterComponent={hasMoreItems ? (
+            <TouchableOpacity 
+              style={styles.loadMoreButton} 
+              onPress={handleLoadMoreItems}
+            >
+              <ThemedText style={styles.loadMoreText}>{t.loadPrevious || 'Load Previous'}</ThemedText>
+            </TouchableOpacity>
+          ) : null}
         />
       ) : monthEntries.length > 0 ? (
         <View style={styles.listContainer}>
@@ -618,10 +732,31 @@ export default function DastiKhataScreen() {
           </View>
           
           <FlatList
-            data={visibleMonthEntries}
+            data={visibleMonthEntries.slice(0, visibleItems / 5)} // Approximate number of months to show based on item limit
             keyExtractor={([monthKey]) => monthKey}
             renderItem={renderMonthSection}
             contentContainerStyle={{ paddingBottom: 120 }}
+            ListFooterComponent={
+              <>  
+                {hasMoreItems ? (
+                  <TouchableOpacity 
+                    style={styles.loadMoreButton} 
+                    onPress={handleLoadMoreItems}
+                  >
+                    <ThemedText style={styles.loadMoreText}>{t.loadPrevious || 'Load Previous'}</ThemedText>
+                  </TouchableOpacity>
+                ) : null}
+                
+                {hasOlderData() && !showAllData ? (
+                  <TouchableOpacity 
+                    style={styles.loadMoreButton}
+                    onPress={() => setShowAllData(true)}
+                  >
+                    <ThemedText style={styles.loadMoreText}>{t.loadPreviousData || 'Load Previous Data'}</ThemedText>
+                  </TouchableOpacity>
+                ) : null}
+              </>
+            }
           />
           
           {hasMoreMonths && (
@@ -852,6 +987,14 @@ export default function DastiKhataScreen() {
           </ModalContainer>
         </View>
       </Modal>
+
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertVisible(false)}
+      />
     </ThemedView>
   );
 }
@@ -860,6 +1003,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#4A80F0',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  activeTabButton: {
+    backgroundColor: '#4A80F0',
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4A80F0',
+  },
+  activeTabText: {
+    color: 'white',
   },
   header: {
     marginBottom: 24,
@@ -1122,4 +1291,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-}); 
+});

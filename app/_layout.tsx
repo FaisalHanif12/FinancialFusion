@@ -10,6 +10,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { KhataProvider } from '@/context/KhataContext';
 import { ThemeProvider as StyledThemeProvider } from '@/context/ThemeProvider';
 import { AppProvider, useAppContext } from '@/contexts/AppContext';
+import { ExpenseProvider } from '@/contexts/ExpenseContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -81,9 +82,11 @@ function RootLayoutWithTheme() {
       <ThemeProvider value={appTheme}>
         <StyledThemeProvider>
           <KhataProvider>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
+            <ExpenseProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+            </ExpenseProvider>
           </KhataProvider>
         </StyledThemeProvider>
       </ThemeProvider>

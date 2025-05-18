@@ -258,20 +258,26 @@ export default function AddExpenseScreen() {
     setAlertVisible(true);
   };
 
-  const handleAddExpense = async () => {
+  const handleSubmit = async () => {
     if (!khata) return;
     
-    if (source.trim() === '' || amount.trim() === '') {
-      showAlert(t.error, t.fillAllFields, 'error');
+    // Enhanced validation
+    if (source.trim() === '') {
+      showAlert(t.error || 'Error', t.pleaseEnterValidSource || 'Please enter a valid expense source', 'error');
+      return;
+    }
+    
+    if (amount.trim() === '') {
+      showAlert(t.error || 'Error', t.pleaseEnterAmount || 'Please enter an amount', 'error');
       return;
     }
 
     const expenseAmount = parseFloat(amount);
     if (isNaN(expenseAmount) || expenseAmount <= 0) {
-      showAlert(t.error, t.enterValidAmount, 'error');
+      showAlert(t.error || 'Error', t.pleaseEnterValidAmount || 'Please enter a valid positive amount', 'error');
       return;
     }
-
+ 
     try {
       await addExpense(khata.id, {
         date: formattedDate,
@@ -285,14 +291,14 @@ export default function AddExpenseScreen() {
         setKhata(updatedKhata);
       }
 
-      showAlert(t.success, t.expenseAddedSuccess, 'success');
+      showAlert(t.success || 'Success', t.expenseAddedSuccess || 'Expense added successfully', 'success');
       
       // Short delay before navigating back to show success message
       setTimeout(() => {
         router.back();
       }, 1500);
     } catch (error) {
-      showAlert(t.error, t.failedToAddExpense, 'error');
+      showAlert(t.error || 'Error', t.failedToAddExpense || 'Failed to add expense', 'error');
     }
   };
 
@@ -344,8 +350,8 @@ export default function AddExpenseScreen() {
               {t.availableBalance || 'Available Balance'}: {khata.totalAmount < 0 ? '-' : ''}{t.currency}{Math.abs(khata.totalAmount).toFixed(0)}
             </ThemedText>
           )}
-          
-          <SubmitButton onPress={handleAddExpense}>
+           
+          <SubmitButton onPress={handleSubmit}>
             <SubmitButtonText>{t.addExpense || 'Add Expense'}</SubmitButtonText>
           </SubmitButton>
           
@@ -640,4 +646,4 @@ const styles = StyleSheet.create({
   disabledDayText: {
     color: '#999',
   },
-}); 
+});

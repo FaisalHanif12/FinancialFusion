@@ -6,6 +6,7 @@ import { ThemedView } from './ThemedView';
 import { ThemedTextInput } from './ThemedTextInput';
 import { useKhata } from '../context/KhataContext';
 import { useAppContext } from '@/contexts/AppContext';
+import CustomAlert from '@/app/components/CustomAlert';
 
 // Define theme interface for type safety
 interface ThemeProps {
@@ -117,29 +118,40 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
   const [totalAmount, setTotalAmount] = useState('');
   const { addKhata } = useKhata();
   const { t, isUrdu } = useAppContext();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as const });
 
   // Format today's date as YYYY-MM-DD
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
 
+  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info' = 'error') => {
+    setAlertConfig({ title, message, type });
+    setAlertVisible(true);
+  };
+
   const handleCreateKhata = async () => {
     if (name.trim() === '' || totalAmount.trim() === '') {
-      // Validate form
-      alert(t.fillAllFields || 'Please fill in all fields');
+      showAlert(t.error || 'Error', t.fillAllFields || 'Please fill in all fields');
       return;
     }
 
-    // Create new khata
-    await addKhata({
-      name: name.trim(),
-      date: formattedDate,
-      totalAmount: parseFloat(totalAmount),
-    });
+    try {
+      // Create new khata
+      await addKhata({
+        name: name.trim(),
+        date: formattedDate,
+        totalAmount: parseFloat(totalAmount),
+      });
 
-    // Reset form and close modal
-    setName('');
-    setTotalAmount('');
-    onClose();
+      // Reset form and close modal
+      setName('');
+      setTotalAmount('');
+      onClose();
+    } catch (error) {
+      console.error('Error creating khata:', error);
+      showAlert(t.error || 'Error', t.failedToCreateKhata || 'Failed to create khata');
+    }
   };
 
   const handleCancel = () => {
@@ -195,8 +207,15 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
           </ModalContent>
         </ModalContainer>
       </TouchableWithoutFeedback>
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertVisible(false)}
+      />
     </Modal>
   );
 };
 
-export default CreateKhataModal; 
+export default CreateKhataModal;
