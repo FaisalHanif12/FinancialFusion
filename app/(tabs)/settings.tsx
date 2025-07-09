@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import Logo from '@/components/Logo';
 import styled from 'styled-components/native';
 import { useAppContext } from '@/contexts/AppContext';
 
@@ -59,6 +60,7 @@ export default function SettingsScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
+        <Logo size="medium" style={styles.logo} />
         <ThemedText type="title" style={styles.title}>{t.settingsTitle}</ThemedText>
         <ThemedText style={styles.subtitle}>{t.managePreferences}</ThemedText>
       </ThemedView>
@@ -123,6 +125,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
     paddingVertical: 16,
+  },
+  logo: {
+    marginBottom: 8,
   },
   title: {
     fontSize: 24,
