@@ -5,9 +5,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/financial_logo.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/financial_logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121212"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -16,8 +19,7 @@
         "foregroundImage": "./assets/images/financial_logo.png",
         "backgroundColor": "#121212"
       },
-      "package": "com.financialfusion.app",
-      "versionCode": 1
+      "package": "com.financialfusion.app"
     },
     "web": {
       "bundler": "metro",
@@ -25,16 +27,7 @@
       "favicon": "./assets/images/financial_logo.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/financial_logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#121212"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
@@ -44,7 +37,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "e5edad27-9ba2-45db-8242-96854bd26c6b"
+        "projectId": "83d703b4-32af-4b78-8c0e-e40c87f55681"
       }
     },
     "owner": "mehrfaisal111"

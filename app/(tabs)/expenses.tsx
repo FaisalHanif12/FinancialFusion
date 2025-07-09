@@ -4,7 +4,6 @@ import { FontAwesome } from '@expo/vector-icons';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import Logo from '@/components/Logo';
 import { useAppContext } from '@/contexts/AppContext';
 import { useExpense } from '@/contexts/ExpenseContext';
 import AddExpenseModal from '@/components/AddExpenseModal';
@@ -116,7 +115,6 @@ export default function ExpensesScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <Logo size="medium" style={styles.logo} />
         <ThemedText type="title" style={styles.title}>{t.expensesTitle}</ThemedText>
         <ThemedText style={styles.subtitle}>{t.expensesSubtitle}</ThemedText>
       </ThemedView>
@@ -322,8 +320,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  logo: {
-    marginBottom: 16,
   },
 });

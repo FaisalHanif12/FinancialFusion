@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import Logo from '@/components/Logo';
 import KhataCard from '@/components/KhataCard';
 import CreateKhataModal from '@/components/CreateKhataModal';
 import { useKhata } from '@/context/KhataContext';
@@ -38,7 +37,6 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <Logo size="large" style={styles.logo} />
         <ThemedText type="title" style={styles.title}>{t.financialFusion}</ThemedText>
         <ThemedText colorType="secondary" style={styles.subtitle}>{t.manageKhata}</ThemedText>
       </ThemedView>
@@ -76,9 +74,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
     paddingVertical: 16,
-  },
-  logo: {
-    marginBottom: 12,
   },
   title: {
     fontSize: 24,
