@@ -90,6 +90,50 @@ export const translations = {
     themeDesc: 'Toggle between light and dark mode',
     dark: 'Dark',
     light: 'Light',
+    dataManagement: 'Data Management',
+    dataManagementDesc: 'Backup and restore your data',
+    backupRestore: 'Backup & Restore',
+    about: 'About',
+    versionDesc: 'App version information',
+    version: 'Version',
+    
+    // Data Backup & Restore
+    backupCreatedSuccess: 'Backup created successfully',
+    failedToCreateBackup: 'Failed to create backup',
+    restoreBackupWarning: 'This will replace all current data with the backup. Are you sure?',
+    backupRestoredSuccess: 'Backup restored successfully. Please restart the app.',
+    failedToRestoreBackup: 'Failed to restore backup',
+    dataExportedToClipboard: 'Data exported and copied to clipboard',
+    failedToExportData: 'Failed to export data',
+    pleaseEnterImportData: 'Please enter the import data',
+    importDataWarning: 'This will replace all current data. Are you sure?',
+    dataImportedSuccess: 'Data imported successfully. Please restart the app.',
+    failedToImportData: 'Failed to import data',
+    clearBackupWarning: 'This will permanently delete the backup. Are you sure?',
+    backupClearedSuccess: 'Backup cleared successfully',
+    failedToClearBackup: 'Failed to clear backup',
+    backupAvailable: 'Backup Available',
+    pasteImportData: 'Paste import data here...',
+    
+    // Data Management Section
+    dataStatistics: 'Data Statistics',
+    totalKhatas: 'Total Khatas',
+    totalExpenses: 'Total Expenses',
+    totalTransactions: 'Total Transactions',
+    lastBackup: 'Last Backup',
+    autoBackupSettings: 'Auto Backup Settings',
+    autoBackupEnabled: 'Auto Backup Enabled',
+    autoBackupDescription: 'Automatically create backups when app updates are available',
+    manualBackup: 'Manual Backup',
+    createBackup: 'Create Backup',
+    restoreBackup: 'Restore Backup',
+    backupHistory: 'Backup History',
+    dataSize: 'Size',
+    dangerZone: 'Danger Zone',
+    clearAllData: 'Clear All Data',
+    dangerZoneDescription: 'These actions cannot be undone. Use with caution.',
+    restore: 'Restore',
+    khatas: 'Khatas',
     
     // Khata related
     initialAmount: 'Initial amount',
@@ -101,6 +145,13 @@ export const translations = {
     
     // Alert messages
     enterValidAmount: 'Please enter a valid amount',
+    pleaseEnterValidSource: 'Please enter a valid expense source',
+    pleaseEnterAmount: 'Please enter an amount',
+    pleaseEnterValidAmount: 'Please enter a valid positive amount',
+    pleaseEnterDescription: 'Please enter a description',
+    loadPrevious: 'Load Previous',
+    loadPreviousData: 'Load Previous Data',
+    failedToCreateKhata: 'Failed to create khata',
     amountAddedSuccess: 'Amount added successfully!',
     failedToAddAmount: 'Failed to add amount',
     itemDeletedSuccess: 'Item deleted successfully',
@@ -192,6 +243,50 @@ export const translations = {
     themeDesc: 'لائٹ اور ڈارک موڈ کے درمیان ٹوگل کریں',
     dark: 'ڈارک',
     light: 'لائٹ',
+    dataManagement: 'ڈیٹا مینیجمنٹ',
+    dataManagementDesc: 'اپنی ڈیٹا کو بیک آپ کریں اور واپس کریں',
+    backupRestore: 'بیک آپ اور واپس کریں',
+    about: 'پتہ',
+    versionDesc: 'ایپ ورژن کی معلومات',
+    version: 'ورژن',
+    
+    // Data Backup & Restore
+    backupCreatedSuccess: 'بیک آپ کامیابی سے شامل کر دی گئی!',
+    failedToCreateBackup: 'بیک آپ شامل کرنے میں ناکام',
+    restoreBackupWarning: 'یہ فوری سے پہلے ہر سڑھی ڈیٹا کو بیک آپ کے ساتھ جھوٹا کرے گا۔ آپ واقعی چاہتے ہیں؟',
+    backupRestoredSuccess: 'بیک آپ کامیابی سے واپس کر دی گئی۔ آپ کو چھوڑنے کے لیے ڈیٹا کو چھوڑیں۔',
+    failedToRestoreBackup: 'بیک آپ واپس کرنے میں ناکام',
+    dataExportedToClipboard: 'ڈیٹا کامیابی سے کلپ بورڈ میں کپی کر دیا گیا',
+    failedToExportData: 'ڈیٹا کو خارج کرنے میں ناکام',
+    pleaseEnterImportData: 'برائے مہربانی اپنی واپس کرنے کے لیے داخل کردہ ڈیٹا درج کریں',
+    importDataWarning: 'یہ فوری سے پہلے ہر سڑھی ڈیٹا کو جھوٹا کرے گا۔ آپ واقعی چاہتے ہیں؟',
+    dataImportedSuccess: 'ڈیٹا کامیابی سے واپس کر دی گئی۔ آپ کو چھوڑنے کے لیے ڈیٹا کو چھوڑیں۔',
+    failedToImportData: 'ڈیٹا واپس کرنے میں ناکام',
+    clearBackupWarning: 'یہ فوری سے پہلے ہر بیک آپ کو جھوٹا کرے گا۔ آپ واقعی چاہتے ہیں؟',
+    backupClearedSuccess: 'بیک آپ کامیابی سے جاب کر دی گئی!',
+    failedToClearBackup: 'بیک آپ جاب کرنے میں ناکام',
+    backupAvailable: 'بیک آپ دستیاب',
+    pasteImportData: 'پیسٹ کردہ واپس کرنے کے لیے داخل کردہ ڈیٹا یہاں پیسٹ کریں...',
+    
+    // Data Management Section
+    dataStatistics: 'ڈیٹا استاتسٹکس',
+    totalKhatas: 'کل کھاتے',
+    totalExpenses: 'کل اخراجات',
+    totalTransactions: 'کل تراکنشات',
+    lastBackup: 'آخری بیک آپ',
+    autoBackupSettings: 'اٹو بیک آپ سیٹنگز',
+    autoBackupEnabled: 'اٹو بیک آپ اینیبلڈ ہے',
+    autoBackupDescription: 'جب ایپ کی اپڈیٹز دستیاب ہوں تو خودکار بیک آپ بنائیں',
+    manualBackup: 'خودکار بیک آپ',
+    createBackup: 'بیک آپ بنائیں',
+    restoreBackup: 'بیک آپ واپس کریں',
+    backupHistory: 'بیک آپ ہیرور',
+    dataSize: 'سائز',
+    dangerZone: 'خطرناک زون',
+    clearAllData: 'سڑھی ڈیٹا کو جاب کریں',
+    dangerZoneDescription: 'یہ عمل جاب نہیں ہو سکتے۔ اسے حوصلہ ادا کرنے کے لیے حوصلہ ادا کریں۔',
+    restore: 'واپس کریں',
+    khatas: 'کھاتے',
     
     // Khata related
     initialAmount: 'ابتدائی رقم',
@@ -203,6 +298,13 @@ export const translations = {
     
     // Alert messages
     enterValidAmount: 'برائے مہربانی ایک درست رقم درج کریں',
+    pleaseEnterValidSource: 'برائے مہربانی ایک درست خرچے کا ذریعہ درج کریں',
+    pleaseEnterAmount: 'برائے مہربانی ایک رقم درج کریں',
+    pleaseEnterValidAmount: 'برائے مہربانی ایک درست مثبت رقم درج کریں',
+    pleaseEnterDescription: 'برائے مہربانی ایک تفصیل درج کریں',
+    loadPrevious: 'پہلے لوڈ کریں',
+    loadPreviousData: 'پہلے کا ڈیٹا لوڈ کریں',
+    failedToCreateKhata: 'کھاتہ بنانے میں ناکام',
     amountAddedSuccess: 'رقم کامیابی سے شامل کر دی گئی!',
     failedToAddAmount: 'رقم شامل کرنے میں ناکام',
     itemDeletedSuccess: 'آئٹم کامیابی سے حذف کر دیا گیا',
@@ -335,20 +437,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (savedTheme) {
           setTheme(savedTheme as ThemeType);
         } else {
-          // Default to device theme if no saved preference
-          setTheme(deviceTheme === 'dark' ? 'dark' : 'light');
+          // Default to dark theme regardless of device theme
+          setTheme('dark');
         }
         
         if (savedLanguage) {
           setLanguage(savedLanguage as LanguageType);
         }
       } catch (error) {
-        console.error('Error loading preferences:', error);
+        // Error loading preferences - keep default dark theme
       }
     };
     
     loadPreferences();
-  }, [deviceTheme]);
+  }, []);
 
   // Toggle between dark and light themes
   const toggleTheme = async () => {
@@ -357,7 +459,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try {
       await AsyncStorage.setItem('theme', newTheme);
     } catch (error) {
-      console.error('Error saving theme preference:', error);
+      // Error saving theme preference
     }
   };
 
@@ -368,7 +470,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try {
       await AsyncStorage.setItem('language', newLanguage);
     } catch (error) {
-      console.error('Error saving language preference:', error);
+      // Error saving language preference
     }
   };
 
@@ -381,7 +483,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const result = text.toLowerCase().split('').map(char => 
         englishToUrduMapping[char] || char
       ).join('');
-      console.log(`Transliterating to Urdu: "${text}" -> "${result}"`);
       return result;
     } else {
       // If we're in English mode and the text might be in Urdu, convert it back
@@ -391,7 +492,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const result = text.split('').map(char => 
           urduToEnglishMapping[char] || char
         ).join('');
-        console.log(`Transliterating from Urdu: "${text}" -> "${result}"`);
         return result;
       }
       return text;

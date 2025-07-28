@@ -35,4 +35,18 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Android
+android/
+android-app/
+*.apk
+*.aab
+
+# iOS
+ios/
+*.ipa
+
+# Build files
+build/
+.gradle/
+
 app-example

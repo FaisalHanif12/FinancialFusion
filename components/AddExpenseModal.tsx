@@ -23,7 +23,7 @@ export default function AddExpenseModal({ visible, onClose, onAdd }: AddExpenseM
   const [amount, setAmount] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as const });
+  const [alertConfig, setAlertConfig] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' | 'info' }>({ title: '', message: '', type: 'error' });
 
   const handleDateSelect = (day: any) => {
     const selectedDate = new Date(day.timestamp);
@@ -39,23 +39,24 @@ export default function AddExpenseModal({ visible, onClose, onAdd }: AddExpenseM
   const handleAdd = () => {
     // Validate all fields
     if (!description && !amount) {
-      showAlert(t.error || 'Error', t.pleaseCompleteAllFields || 'Please complete all fields');
+      showAlert(t.error || 'Error', 'Please complete all fields');
       return;
     } else if (!description) {
-      showAlert(t.error || 'Error', t.pleaseEnterDescription || 'Please enter a description');
+      showAlert(t.error || 'Error', 'Please enter a description');
       return;
     } else if (!amount) {
-      showAlert(t.error || 'Error', t.pleaseEnterAmount || 'Please enter an amount');
+      showAlert(t.error || 'Error', 'Please enter an amount');
       return;
     } else if (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      showAlert(t.error || 'Error', t.pleaseEnterValidAmount || 'Please enter a valid amount');
+      showAlert(t.error || 'Error', 'Please enter a valid amount');
       return;
     }
 
+    const parsedAmount = parseFloat(amount);
     onAdd({
       date,
       description,
-      amount: parseFloat(amount),
+      amount: isNaN(parsedAmount) ? 0 : parsedAmount,
     });
 
     // Reset form

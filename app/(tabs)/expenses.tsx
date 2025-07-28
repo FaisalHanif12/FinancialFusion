@@ -22,7 +22,7 @@ export default function ExpensesScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [expandedMonths, setExpandedMonths] = useState<string[]>([]);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'info' as const });
+  const [alertConfig, setAlertConfig] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' | 'info' }>({ title: '', message: '', type: 'info' });
   const [showAllData, setShowAllData] = useState(false);
 
   const toggleMonth = (monthYear: string) => {
@@ -82,7 +82,7 @@ export default function ExpensesScreen() {
     <ExpenseItem key={expense.id}>
       <ExpenseHeader>
         <ThemedText>{expense.description}</ThemedText>
-        <ExpenseAmount>${expense.amount.toFixed(2)}</ExpenseAmount>
+        <ExpenseAmount>${(typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0).toFixed(2)}</ExpenseAmount>
       </ExpenseHeader>
       <View style={styles.expenseFooter}>
         <ThemedText style={{ opacity: 0.7 }}>
@@ -121,7 +121,7 @@ export default function ExpensesScreen() {
 
       <ThemedView style={styles.totalExpenseContainer}>
         <ThemedText style={styles.totalExpenseLabel}>Total Expenses</ThemedText>
-        <ThemedText style={styles.totalExpenseAmount}>${totalExpense.toFixed(2)}</ThemedText>
+        <ThemedText style={styles.totalExpenseAmount}>${(typeof totalExpense === 'number' ? totalExpense : 0).toFixed(2)}</ThemedText>
       </ThemedView>
 
       {loading ? (
@@ -155,7 +155,7 @@ export default function ExpensesScreen() {
                       <ThemedText style={styles.monthTitle}>{monthYear}</ThemedText>
                     </View>
                     <ThemedText style={styles.monthTotal}>
-                      ${monthlyTotals[monthYear].toFixed(2)}
+                      ${(typeof monthlyTotals[monthYear] === 'number' ? monthlyTotals[monthYear] : 0).toFixed(2)}
                     </ThemedText>
                   </MonthHeader>
                 </TouchableOpacity>
@@ -169,7 +169,7 @@ export default function ExpensesScreen() {
                   style={styles.loadMoreButton}
                   onPress={() => setShowAllData(true)}
                 >
-                  <ThemedText style={styles.loadMoreText}>{t.loadPreviousData || 'Load Previous Data'}</ThemedText>
+                  <ThemedText style={styles.loadMoreText}>Load Previous Data</ThemedText>
                 </TouchableOpacity>
               ) : null
             }

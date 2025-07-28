@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/financial_logo.png",
+    "scheme": "financialfusion",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/financial_logo.png",
@@ -12,7 +13,8 @@
       "backgroundColor": "#121212"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.financialfusion.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,6 +42,7 @@
         "projectId": "83d703b4-32af-4b78-8c0e-e40c87f55681"
       }
     },
-    "owner": "mehrfaisal111"
+    "owner": "mehrfaisal111",
+    "platforms": ["ios", "android", "web"]
   }
 }

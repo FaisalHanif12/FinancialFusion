@@ -1,102 +1,209 @@
 # FinancialFusion
 
-A sleek, intuitive React Native app designed to effortlessly manage financial records (Khata). This app enables users to create a Khata, store financial details, and track expenses seamlessly.
+A comprehensive financial management app built with React Native and Expo SDK 53, featuring Khata (ledger) management, expense tracking, and multilingual support (English/Urdu).
 
-## Features
+## 🚀 Features
 
-- **Create Khata**: Easily create a new financial record with name, date, and total amount
-- **Track Expenses**: Add expenses to each Khata with source and amount
-- **Real-time Balance**: Automatically updates remaining balance as expenses are added
-- **Persistent Storage**: All data is stored locally using AsyncStorage
+- **Khata Management**: Create and manage multiple ledgers for tracking money lent and borrowed
+- **Expense Tracking**: Track daily expenses with categorization and monthly summaries
+- **Multilingual Support**: Full English and Urdu language support with RTL text handling
+- **Dark/Light Theme**: Automatic theme switching with manual override
+- **Data Backup**: Built-in backup and restore functionality
+- **Responsive Design**: Optimized for both mobile and tablet devices
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **React Native (Expo)**: For cross-platform mobile app development
-- **AsyncStorage**: For local persistent storage
-- **React Navigation**: For smooth navigation between screens
-- **Styled Components**: For styling the UI components
-- **Context API**: For state management
+- **Framework**: React Native 0.79.5
+- **Expo SDK**: 53.0.20
+- **React**: 19.1.1
+- **Navigation**: Expo Router 5.1.4
+- **State Management**: React Context API
+- **Storage**: AsyncStorage
+- **Styling**: Styled Components
+- **Icons**: Expo Vector Icons
+- **Language**: TypeScript
 
-## Screenshots
+## 📱 Screenshots
 
-[Screenshots will be added here]
+- Home Screen with Khata overview
+- Dasti Khata (Ledger) management
+- Expense tracking with monthly summaries
+- Settings with theme and language options
+- Data backup and restore functionality
 
-## Installation
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Expo CLI
+- Expo Go app on your device
+
+### Installation
 
 1. **Clone the repository**
-
-```bash
-git clone https://github.com/yourusername/FinancialFusion.git
-cd FinancialFusion
-```
+   ```bash
+   git clone <repository-url>
+   cd FinancialFusion
+   ```
 
 2. **Install dependencies**
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 
-```bash
-npm install
-```
+3. **Run the setup script**
+   ```bash
+   npm run setup
+   ```
 
-3. **Set execution policy (for Windows users)**
+4. **Start the development server**
+   ```bash
+   npx expo start
+   ```
 
-```bash
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-```
+5. **Run on your device**
+   - Scan the QR code with Expo Go (Android/iOS)
+   - Press 'a' for Android emulator
+   - Press 'i' for iOS simulator
+   - Press 'w' for web browser
 
-4. **Start the application**
+## 🔧 Recent Fixes Applied
 
-```bash
-npm start
-```
+### Expo SDK 53 Compatibility
+- Updated React to version 19.1.1 for compatibility with React Native 0.79.5
+- Updated React DOM to version 19.1.1
+- Updated React Test Renderer to version 19.1.1
+- Added babel-plugin-module-resolver for proper module resolution
 
-## Usage
+### Metro Configuration
+- Added gesture handler alias in metro.config.js
+- Configured proper module resolution for all platforms
 
-1. **Home Screen**:
-   - View all your Khatas
-   - Tap the "+" button to create a new Khata
+### Babel Configuration
+- Updated babel.config.js with module resolver plugin
+- Ensured proper plugin order for React Native Reanimated
 
-2. **Creating a Khata**:
-   - Enter the name of the person/entity
-   - Enter the total amount
-   - Tap "Create" to save
+### Navigation Setup
+- Wrapped app with GestureHandlerRootView for proper gesture handling
+- Updated main layout to use proper gesture handler imports
 
-3. **Viewing a Khata**:
-   - Tap on any Khata card to view details
-   - See the total amount and all expenses
-   - Add new expenses
+### TypeScript Fixes
+- Fixed IconSymbol component type issues
+- Updated style prop types for MaterialIcons compatibility
 
-4. **Adding an Expense**:
-   - Enter the source of expense
-   - Enter the amount
-   - Tap "Add Expense" to save
-
-## Development
-
-### Project Structure
+## 📁 Project Structure
 
 ```
 FinancialFusion/
-├── app/                  # Main application screens
-│   ├── (tabs)/           # Tab screens
-│   ├── khata/            # Khata detail screens
-│   └── add-expense/      # Add expense screens
-├── components/           # Reusable UI components
-├── constants/            # Theme and constants
+├── app/                    # Expo Router app directory
+│   ├── (tabs)/            # Tab navigation screens
+│   ├── _layout.tsx        # Root layout
+│   └── components/        # App-specific components
+├── components/            # Shared components
+│   ├── ui/               # UI components
+│   └── ...               # Other components
 ├── context/              # Context providers
-│   ├── KhataContext.tsx  # Khata state management
-│   └── ThemeProvider.tsx # Styled-components theme provider
-└── assets/               # Images, fonts, etc.
+├── contexts/             # Additional contexts
+├── constants/            # App constants
+├── hooks/                # Custom hooks
+├── utils/                # Utility functions
+└── scripts/              # Build and setup scripts
 ```
 
-## Contributing
+## 🎯 Key Features Explained
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Khata Management
+- Create multiple ledgers for different purposes
+- Track money lent and borrowed
+- Automatic balance calculations
+- Transaction history with timestamps
 
-## License
+### Expense Tracking
+- Add expenses with descriptions and amounts
+- Monthly expense summaries
+- Categorized expense tracking
+- Available balance calculations
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Multilingual Support
+- English and Urdu language support
+- RTL text handling for Urdu
+- Automatic text transliteration
+- Language persistence
 
-## Acknowledgements
+### Theme System
+- Automatic dark/light theme detection
+- Manual theme override
+- Theme persistence across app restarts
+- Consistent theming across all components
 
-- [Expo](https://expo.dev/)
-- [React Native](https://reactnative.dev/)
-- [Styled Components](https://styled-components.com/)
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Metro bundler errors**
+   ```bash
+   npx expo start --clear
+   ```
+
+2. **Dependency conflicts**
+   ```bash
+   rm -rf node_modules package-lock.json
+   npm install --legacy-peer-deps
+   ```
+
+3. **TypeScript errors**
+   ```bash
+   npx tsc --noEmit
+   ```
+
+4. **Gesture handler issues**
+   - Ensure GestureHandlerRootView wraps the app
+   - Check metro.config.js for proper aliases
+
+### Development Tips
+
+- Use `npm run setup` to reset and reinstall dependencies
+- Clear cache with `npx expo start --clear` when experiencing issues
+- Check TypeScript errors with `npx tsc --noEmit`
+- Use `npm run type-check` for quick type checking
+
+## 📦 Build
+
+### Android APK
+```bash
+npx expo run:android
+```
+
+### iOS
+```bash
+npx expo run:ios
+```
+
+### Web
+```bash
+npx expo start --web
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and type checks
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Expo team for the excellent development platform
+- React Native community for the robust ecosystem
+- Contributors and testers for feedback and improvements
+
+---
+
+**Note**: This app is fully functional with Expo SDK 53 and includes all necessary fixes for compatibility issues. The setup script will automatically handle dependency installation and configuration.

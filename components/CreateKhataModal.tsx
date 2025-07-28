@@ -119,7 +119,7 @@ export const CreateKhataModal: React.FC<CreateKhataModalProps> = ({ visible, onC
   const { addKhata } = useKhata();
   const { t, isUrdu } = useAppContext();
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as const });
+  const [alertConfig, setAlertConfig] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' | 'info' }>({ title: '', message: '', type: 'error' });
 
   // Format today's date as YYYY-MM-DD
   const today = new Date();

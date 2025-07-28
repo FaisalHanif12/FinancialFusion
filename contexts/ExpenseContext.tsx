@@ -44,7 +44,10 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     }, {} as MonthlyExpenses);
 
     const totals = Object.entries(grouped).reduce((acc, [month, expenses]) => {
-      acc[month] = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+      acc[month] = expenses.reduce((sum, exp) => {
+        const amount = typeof exp.amount === 'number' ? exp.amount : parseFloat(exp.amount) || 0;
+        return sum + amount;
+      }, 0);
       return acc;
     }, {} as { [key: string]: number });
 
@@ -61,17 +64,84 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
 
   const loadExpenses = async () => {
     try {
-      const storedExpenses = await AsyncStorage.getItem('expenses');
-      if (storedExpenses) {
-        const parsedExpenses = JSON.parse(storedExpenses).map((expense: any) => ({
-          ...expense,
-          date: new Date(expense.date)
-        }));
-        setExpenses(parsedExpenses);
-        calculateMonthlyData(parsedExpenses);
-      }
+      // Check if migration is needed
+      // const migrationNeeded = await DataMigration.checkMigrationNeeded();
+      
+      // if (migrationNeeded) {
+      //   console.log('Expense data migration needed, starting migration...');
+      //   const migrationResult = await DataMigration.migrateData();
+        
+      //   if (migrationResult.success) {
+      //     console.log('Expense data migration completed successfully');
+      //     const migratedExpenses = migrationResult.migratedData?.expenses || [];
+      //     const parsedExpenses = migratedExpenses.map((expense: any) => ({
+      //       ...expense,
+      //       date: new Date(expense.date),
+      //       amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
+      //     }));
+      //     setExpenses(parsedExpenses);
+      //     calculateMonthlyData(parsedExpenses);
+      //   } else {
+      //     console.error('Expense data migration failed:', migrationResult.error);
+      //     // Try to restore from backup
+      //     const restoreResult = await DataMigration.restoreFromBackup();
+      //     if (restoreResult.success) {
+      //       console.log('Expense data restored from backup');
+      //       const restoredExpenses = restoreResult.migratedData?.expenses || [];
+      //       const parsedExpenses = restoredExpenses.map((expense: any) => ({
+      //         ...expense,
+      //         date: new Date(expense.date),
+      //         amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
+      //       }));
+      //       setExpenses(parsedExpenses);
+      //       calculateMonthlyData(parsedExpenses);
+      //     } else {
+      //       console.error('Expense backup restoration failed:', restoreResult.error);
+      //       // Load original data as fallback
+      //       const storedExpenses = await AsyncStorage.getItem('expenses');
+      //       if (storedExpenses) {
+      //         const parsedExpenses = JSON.parse(storedExpenses).map((expense: any) => ({
+      //           ...expense,
+      //           date: new Date(expense.date),
+      //           amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
+      //         }));
+      //         setExpenses(parsedExpenses);
+      //         calculateMonthlyData(parsedExpenses);
+      //       }
+      //     }
+      //   }
+      // } else {
+        // No migration needed, load data normally
+        const storedExpenses = await AsyncStorage.getItem('expenses');
+        if (storedExpenses) {
+          const parsedExpenses = JSON.parse(storedExpenses).map((expense: any) => ({
+            ...expense,
+            date: new Date(expense.date),
+            amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
+          }));
+          setExpenses(parsedExpenses);
+          calculateMonthlyData(parsedExpenses);
+        }
+      // }
     } catch (error) {
-      console.error('Error loading expenses:', error);
+      // Error loading expenses
+      // Try to restore from backup on error
+      try {
+        // const restoreResult = await DataMigration.restoreFromBackup();
+        // if (restoreResult.success) {
+        //   console.log('Expense data restored from backup after error');
+        //   const restoredExpenses = restoreResult.migratedData?.expenses || [];
+        //   const parsedExpenses = restoredExpenses.map((expense: any) => ({
+        //     ...expense,
+        //     date: new Date(expense.date),
+        //     amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
+        //   }));
+        //   setExpenses(parsedExpenses);
+        //   calculateMonthlyData(parsedExpenses);
+        // }
+              } catch (backupError) {
+          // Expense backup restoration also failed
+        }
     } finally {
       setLoading(false);
     }
@@ -82,14 +152,24 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
       const expense: Expense = {
         ...newExpense,
         id: Date.now().toString(),
+        amount: typeof newExpense.amount === 'number' ? newExpense.amount : parseFloat(newExpense.amount) || 0
       };
 
       const updatedExpenses = [...expenses, expense];
       await AsyncStorage.setItem('expenses', JSON.stringify(updatedExpenses));
       setExpenses(updatedExpenses);
       calculateMonthlyData(updatedExpenses);
+      
+      // Create backup periodically
+      const saveCount = await AsyncStorage.getItem('expense_save_count') || '0';
+      const newCount = parseInt(saveCount) + 1;
+      await AsyncStorage.setItem('expense_save_count', newCount.toString());
+      
+      // if (newCount % 10 === 0) {
+      //   await DataMigration.createBackup();
+      // }
     } catch (error) {
-      console.error('Error adding expense:', error);
+      // Error adding expense
       throw error;
     }
   };
@@ -101,7 +181,7 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
       setExpenses(updatedExpenses);
       calculateMonthlyData(updatedExpenses);
     } catch (error) {
-      console.error('Error deleting expense:', error);
+      // Error deleting expense
       throw error;
     }
   };

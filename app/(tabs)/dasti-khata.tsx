@@ -99,392 +99,162 @@ const ModalContainer = styled(ThemedView)`
   padding: 24px;
   width: 90%;
   max-width: 400px;
-`;
-
-const ModalTitle = styled(ThemedText)`
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  text-align: center;
-`;
-
-const ButtonsRow = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-top: 8px;
-`;
-
-const ModalButton = styled(TouchableOpacity)`
-  padding: 12px 24px;
-  border-radius: 8px;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  margin-horizontal: 8px;
-`;
-
-// Replace StyledInput with ThemedTextInput
-const StyledInput = styled(ThemedTextInput)`
-  border-width: 1px;
-  border-color: ${(props: ThemeProps) => props.theme.colors.border};
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  margin-bottom: 16px;
-  color: ${(props: ThemeProps) => props.theme.colors.text};
-  background-color: ${(props: ThemeProps) => props.theme.colors.background};
-`;
-
-// Add Date Container component
-const DateContainer = styled(TouchableOpacity)`
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 16px;
-  padding: 12px;
-  border-width: 1px;
-  border-color: ${(props: ThemeProps) => props.theme.colors.border};
-  border-radius: 8px;
-  background-color: ${(props: ThemeProps) => props.theme.colors.card};
-`;
-
-const DateText = styled(ThemedText)`
-  font-size: 16px;
-  margin-left: 8px;
-  color: ${(props: ThemeProps) => props.theme.colors.text};
-`;
-
-// Add components for the monthly section
-const MonthSection = styled(ThemedView)`
-  margin-bottom: 16px;
-`;
-
-const MonthHeader = styled(ThemedView)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: ${(props: ThemeProps) => props.theme.colors.card};
-  border-radius: 10px;
-  margin-bottom: 8px;
-  elevation: 2;
-  shadow-opacity: 0.1;
-  shadow-radius: 3px;
-  shadow-color: #000;
-  shadow-offset: 0px 2px;
-`;
-
-const MonthTitle = styled(ThemedText)`
-  font-size: 16px;
-  font-weight: 600;
-`;
-
-const DatePickerModalOverlay = styled(View)`
-  flex: 1;
-  justifyContent: 'center';
-  alignItems: 'center';
-  backgroundColor: 'rgba(0, 0, 0, 0.5)';
-  padding: 16;
-`;
-
-const DatePickerModalContent = styled(View)`
-  backgroundColor: ${(props: ThemeProps) => props.theme.colors.card};
-  border-radius: 16px;
-  padding: 24px;
-  width: 90%;
-  maxWidth: 400px;
-`;
-
-const DatePickerHeader = styled(View)`
-  flexDirection: 'row';
-  justifyContent: 'space-between';
-  alignItems: 'center';
-`;
-
-const DatePickerTitle = styled(ThemedText)`
-  fontSize: 20px;
-  fontWeight: 700;
-`;
-
-const CalendarContainer = styled(View)`
-  margin-top: 16px;
-`;
-
-const CalendarHeader = styled(View)`
-  flexDirection: 'row';
-  justifyContent: 'space-between';
-  alignItems: 'center';
-`;
-
-const CalendarNavButton = styled(TouchableOpacity)`
-  padding: 8px;
-`;
-
-const CalendarTitle = styled(ThemedText)`
-  font-size: 18px;
-  font-weight: 700;
-  color: #000000;
-`;
-
-const WeekdayHeader = styled(View)`
-  flexDirection: 'row';
-  justifyContent: 'space-between';
-  alignItems: 'center';
-  marginBottom: 8px;
-`;
-
-const WeekdayText = styled(ThemedText)`
-  width: 14.28%;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #000000;
-`;
-
-const CalendarDays = styled(View)`
-  flexDirection: 'row';
-  flexWrap: 'wrap';
-`;
-
-const CalendarDay = styled(TouchableOpacity)`
-  width: 14.28%;
-  padding: 8px;
-`;
-
-const SelectedDay = styled(View)`
-  backgroundColor: ${(props: ThemeProps) => props.theme.colors.primary};
-  borderRadius: 8px;
-`;
-
-const SelectedDayText = styled(ThemedText)`
-  color: white;
-  fontWeight: 700;
-`;
-
-const TodayDay = styled(View)`
-  backgroundColor: ${(props: ThemeProps) => props.theme.colors.primary};
-  borderRadius: 8px;
-`;
-
-const TodayDayText = styled(ThemedText)`
-  color: white;
-  fontWeight: 700;
-`;
-
-const DisabledDay = styled(View)`
-  backgroundColor: ${(props: ThemeProps) => props.theme.colors.secondary};
-  borderRadius: 8px;
-`;
-
-const DisabledDayText = styled(ThemedText)`
-  color: ${(props: ThemeProps) => props.theme.colors.text};
-`;
-
-const DatePickerActions = styled(View)`
-  flexDirection: 'row';
-  justifyContent: 'space-between';
-  marginTop: 16px;
-`;
-
-const DatePickerButton = styled(TouchableOpacity)`
-  padding: 12px 24px;
-  borderRadius: 8px;
-  alignItems: 'center';
-  justifyContent: 'center';
+  align-self: center;
+  margin-top: 20%;
 `;
 
 export default function DastiKhataScreen() {
+  const { t, isDark } = useAppContext();
   const router = useRouter();
-  const [search, setSearch] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newAmount, setNewAmount] = useState('');
-  const [newDescription, setNewDescription] = useState('');
-  
-  // Tab navigation state
-  const [activeTab, setActiveTab] = useState('unpaid'); // 'unpaid' or 'paid'
-  
-  // Pagination state
-  const [visibleItems, setVisibleItems] = useState(30);
-  
-  // Date picker state variables
-  const todayUTC = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
-  const [selectedDate, setSelectedDate] = useState(todayUTC);
-  const [showDatePickerModal, setShowDatePickerModal] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(todayUTC.getMonth());
-  const [currentYear, setCurrentYear] = useState(todayUTC.getFullYear());
-  
-  // State for collapsible months
-  const [expandedMonths, setExpandedMonths] = useState<string[]>([]);
-  const [expandAll, setExpandAll] = useState(false);
-  const [visibleMonths, setVisibleMonths] = useState(6);
-  const [showAllData, setShowAllData] = useState(false);
-  
-  // Get translations from our app context
-  const { t } = useAppContext();
-  
-  // Format the selected date as YYYY-MM-DD
-  const formattedDate = `${selectedDate.getUTCFullYear()}-${String(selectedDate.getUTCMonth() + 1).padStart(2, '0')}-${String(selectedDate.getUTCDate()).padStart(2, '0')}`;
-  
-  // Update calendar view when selected date changes
-  useEffect(() => {
-    setCurrentMonth(selectedDate.getUTCMonth());
-    setCurrentYear(selectedDate.getUTCFullYear());
-  }, [selectedDate]);
-  
-  // Initialize with an empty array instead of static data
   const [dastiKhatas, setDastiKhatas] = useState<DastiKhata[]>([]);
-
-  const markAsPaid = (id: string) => {
-    setDastiKhatas(
-      dastiKhatas.map(khata => 
-        khata.id === id ? { ...khata, isPaid: true } : khata
-      )
-    );
-  };
-
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState<'unpaid' | 'paid'>('unpaid');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [newKhata, setNewKhata] = useState<Omit<DastiKhata, 'id'>>({
+    name: '',
+    amount: 0,
+    date: new Date().toISOString().split('T')[0],
+    isPaid: false,
+    description: ''
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState(new Date().getDate());
+  const [expandAll, setExpandAll] = useState(false);
+  const [visibleItems, setVisibleItems] = useState(20);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const confirmDelete = (id: string) => {
-    setItemToDelete(id);
-    setShowDeleteConfirm(true);
-  };
-
-  const handleDelete = () => {
-    if (itemToDelete) {
-      setDastiKhatas(dastiKhatas.filter(khata => khata.id !== itemToDelete));
-      setItemToDelete(null);
-    }
-    setShowDeleteConfirm(false);
-  };
-
+  // Alert states
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', type: 'error' as const });
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'warning' | 'info'>('info');
 
-  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info' = 'error') => {
-    setAlertConfig({ title, message, type });
-    setAlertVisible(true);
-  };
+  const today = new Date().getDate();
+  const currentMonthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' });
 
-  const handleAddDastiKhata = () => {
-    if (!newName.trim() && !newAmount.trim()) {
-      showAlert(t.error || 'Error', t.pleaseCompleteAllFields || 'Please complete all fields');
-      return;
-    } else if (!newName.trim()) {
-      showAlert(t.error || 'Error', t.pleaseEnterName || 'Please enter a name');
-      return;
-    } else if (!newAmount.trim()) {
-      showAlert(t.error || 'Error', t.pleaseEnterAmount || 'Please enter an amount');
-      return;
-    }
-    
-    const parsedAmount = parseFloat(newAmount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      showAlert(t.error || 'Error', t.pleaseEnterValidAmount || 'Please enter a valid amount');
-      return;
-    }
-    
-    const newDastiKhata: DastiKhata = {
-      id: (dastiKhatas.length + 1).toString(),
-      name: newName.trim(),
-      amount: parsedAmount,
-      date: formattedDate,
-      isPaid: false,
-      description: newDescription.trim(),
-    };
-    
-    setDastiKhatas([newDastiKhata, ...dastiKhatas]);
-    setNewName('');
-    setNewAmount('');
-    setNewDescription('');
-    setShowAddModal(false);
-    showAlert(t.success || 'Success', t.entryAddedSuccessfully || 'Entry added successfully', 'success');
-  };
-
-  const renderDastiKhataItem = ({ item }: { item: DastiKhata }) => (
-    <Card>
-      <View style={styles.cardHeader}>
-        <View>
-          <DastiKhataName>{item.name}</DastiKhataName>
-          <DastiKhataDate>{t.created} {item.date}</DastiKhataDate>
-          {item.description && (
-            <ThemedText style={styles.description}>{item.description}</ThemedText>
-          )}
-        </View>
-        <View>
-          <Status isPaid={item.isPaid}>
-            <StatusText isPaid={item.isPaid}>
-              {item.isPaid ? t.paid : t.unpaid}
-            </StatusText>
-          </Status>
-        </View>
-      </View>
-      
-      <View style={styles.actionsRow}>
-        <DastiKhataAmount isPaid={item.isPaid}>{t.currency}{item.amount.toFixed(2)}</DastiKhataAmount>
-        
-        <TouchableOpacity 
-          style={styles.deleteButton}
-          onPress={() => confirmDelete(item.id)}
-        >
-          <FontAwesome name="trash" size={16} color="#e74c3c" />
-        </TouchableOpacity>
-      </View>
-      
-      {!item.isPaid && (
-        <TouchableOpacity 
-          style={styles.payButton}
-          onPress={() => markAsPaid(item.id)}
-        >
-          <ThemedText style={styles.payButtonText}>{t.markAsPaid}</ThemedText>
-        </TouchableOpacity>
-      )}
-    </Card>
-  );
-
-  // Filter khatas by search term and payment status
+  // Filter khatas based on search and active tab
   const filteredKhatas = dastiKhatas.filter(khata => {
     const matchesSearch = khata.name.toLowerCase().includes(search.toLowerCase());
     const matchesTab = activeTab === 'paid' ? khata.isPaid : !khata.isPaid;
     return matchesSearch && matchesTab;
   });
-  
-  // Apply pagination to filtered khatas
+
   const paginatedKhatas = filteredKhatas.slice(0, visibleItems);
   const hasMoreItems = filteredKhatas.length > visibleItems;
-  
-  // Load more items
-  const handleLoadMoreItems = () => {
-    setVisibleItems(prev => prev + 30);
-  };
-  
-  // Reset pagination when tab changes
-  useEffect(() => {
-    setVisibleItems(30);
-  }, [activeTab]);
 
-  const renderEmptyState = () => (
-    <ThemedView style={styles.emptyContainer}>
-      <FontAwesome name="book" size={64} color="#ccc" style={styles.emptyIcon} />
-      <ThemedText style={styles.emptyText}>{t.noDastiKhataYet}</ThemedText>
-      <ThemedText style={styles.emptySubtext}>
-        {t.tapToAddDastiKhata}
-      </ThemedText>
-    </ThemedView>
+  const markAsPaid = (id: string) => {
+    setDastiKhatas(prev => prev.map(khata => 
+      khata.id === id ? { ...khata, isPaid: !khata.isPaid } : khata
+    ));
+  };
+
+  const confirmDelete = (id: string) => {
+    setItemToDelete(id);
+    setDeleteModalVisible(true);
+  };
+
+  const handleDelete = () => {
+    if (itemToDelete) {
+      setDastiKhatas(prev => prev.filter(khata => khata.id !== itemToDelete));
+      setDeleteModalVisible(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info' = 'error') => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertVisible(true);
+  };
+
+  const handleAddDastiKhata = () => {
+    setNewKhata({
+      name: '',
+      amount: 0,
+      date: new Date().toISOString().split('T')[0],
+      isPaid: false,
+      description: ''
+    });
+    setModalVisible(true);
+  };
+
+  const renderDastiKhataItem = ({ item }: { item: DastiKhata }) => (
+    <Card key={item.id}>
+      <View style={styles.cardHeader}>
+        <DastiKhataName>{item.name}</DastiKhataName>
+        <DastiKhataAmount isPaid={item.isPaid}>
+          ₹{item.amount.toFixed(0)}
+        </DastiKhataAmount>
+      </View>
+      <DastiKhataDate>{item.date}</DastiKhataDate>
+      {item.description && (
+        <ThemedText style={styles.description}>{item.description}</ThemedText>
+      )}
+      <Status isPaid={item.isPaid}>
+        <StatusText isPaid={item.isPaid}>
+          {item.isPaid ? t.paid : t.unpaid}
+        </StatusText>
+      </Status>
+      <View style={styles.actionsRow}>
+        <TouchableOpacity 
+          style={[styles.actionButton, item.isPaid ? styles.paidButton : styles.unpaidButton]}
+          onPress={() => markAsPaid(item.id)}
+        >
+          <FontAwesome 
+            name={item.isPaid ? 'check-circle' : 'circle-o'} 
+            size={16} 
+            color={item.isPaid ? '#22A45D' : '#4A80F0'} 
+          />
+          <ThemedText style={[styles.actionText, item.isPaid ? styles.paidText : styles.unpaidText]}>
+            {item.isPaid ? t.markAsPaid : t.markAsPaid}
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity 
+                        style={styles.deleteButtonPadding}
+          onPress={() => confirmDelete(item.id)}
+        >
+          <FontAwesome name="trash" size={16} color="#FF3B30" />
+        </TouchableOpacity>
+      </View>
+    </Card>
   );
 
-  // Update selected date
-  const selectDate = (day: number) => {
-    const newDate = new Date(Date.UTC(currentYear, currentMonth, day));
-    setSelectedDate(newDate);
-    setShowDatePickerModal(false);
+  const handleLoadMoreItems = () => {
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleItems(prev => prev + 10);
+      setLoadingMore(false);
+    }, 1000);
   };
 
-  // Calendar navigation functions
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <FontAwesome name="search" size={48} color="#ccc" style={styles.emptyIcon} />
+      <ThemedText style={styles.emptyText}>
+        {search ? 'No results found' : t.noDastiKhataYet}
+      </ThemedText>
+      <ThemedText style={styles.emptySubtext}>
+        {search ? 'Try a different search term' : t.tapToAddDastiKhata}
+      </ThemedText>
+    </View>
+  );
+
+  const selectDate = (day: number) => {
+    setSelectedDay(day);
+    const newDate = new Date(currentYear, currentMonth, day);
+    setSelectedDate(newDate.toISOString().split('T')[0]);
+  };
+
   const goPrevMonth = () => {
     if (currentMonth === 0) {
-      setCurrentYear(currentYear - 1);
       setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
     } else {
       setCurrentMonth(currentMonth - 1);
     }
@@ -492,162 +262,105 @@ export default function DastiKhataScreen() {
 
   const goNextMonth = () => {
     if (currentMonth === 11) {
-      setCurrentYear(currentYear + 1);
       setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
     } else {
       setCurrentMonth(currentMonth + 1);
     }
   };
 
-  // Generate calendar days
   const generateCalendarDays = () => {
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
     const days = [];
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
-    // Add empty spaces for days before the 1st of the month
-    for (let i = 0; i < firstDay; i++) {
-      days.push(null);
+    for (let i = 0; i < 42; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      if (date.getMonth() === currentMonth) {
+        days.push(date.getDate());
+      } else {
+        days.push(null);
+      }
     }
-    
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-    
     return days;
   };
 
-  // Group khatas by month
   const groupByMonth = () => {
     const groups: { [key: string]: DastiKhata[] } = {};
-
-    // Filter by payment status first
-    const filteredByStatus = dastiKhatas.filter(khata => 
-      activeTab === 'paid' ? khata.isPaid : !khata.isPaid
-    );
-    
-    // Sort by date, newest first
-    const sortedKhatas = [...filteredByStatus].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    sortedKhatas.forEach(khata => {
+    dastiKhatas.forEach(khata => {
       const date = new Date(khata.date);
-      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
-      if (!groups[monthYear]) {
-        groups[monthYear] = [];
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!groups[monthKey]) {
+        groups[monthKey] = [];
       }
-      
-      groups[monthYear].push(khata);
+      groups[monthKey].push(khata);
     });
-    
-    // Convert to array of entries and sort by date (newest first)
-    const sortedEntries = Object.entries(groups).sort((a, b) => {
-      const [yearMonthA] = a[0].split('-');
-      const [yearMonthB] = b[0].split('-');
-      return yearMonthB.localeCompare(yearMonthA);
-    });
-    
-    // Always show only the latest 6 months by default
-    const latestSixMonths = sortedEntries.slice(0, 6);
-    const olderMonths = sortedEntries.slice(6);
-    
-    // If showing all data, append older months after the latest 6
-    if (showAllData) {
-      return Object.fromEntries([...latestSixMonths, ...olderMonths]);
-    }
-    
-    return Object.fromEntries(latestSixMonths);
+    return Object.entries(groups).sort((a, b) => b[0].localeCompare(a[0]));
   };
 
-  // Toggle expanded state for a month
   const toggleMonthExpanded = (monthKey: string) => {
-    setExpandedMonths(prev => {
-      if (prev.includes(monthKey)) {
-        return prev.filter(m => m !== monthKey);
-      } else {
-        return [...prev, monthKey];
-      }
-    });
+    // Implementation for expanding/collapsing months
   };
 
-  // Toggle expand all
   const toggleExpandAll = () => {
-    const newExpandAll = !expandAll;
-    setExpandAll(newExpandAll);
-    
-    const monthsData = groupByMonth();
-    const allMonths = Object.keys(monthsData);
-    
-    if (newExpandAll) {
-      setExpandedMonths(allMonths);
-    } else {
-      setExpandedMonths([]);
-    }
+    setExpandAll(!expandAll);
   };
 
-  // Load more months
   const handleLoadMore = () => {
-    setVisibleMonths(prev => prev + 6);
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleItems(prev => prev + 20);
+      setLoadingMore(false);
+    }, 1000);
   };
 
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June', 
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  // Format month key for display
   const formatMonthDisplay = (monthKey: string) => {
     const [year, month] = monthKey.split('-');
-    return `${monthNames[parseInt(month) - 1]} ${year}`;
+    return new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { 
+      month: 'long', 
+      year: 'numeric' 
+    });
   };
 
-  // Render a month section with collapsible content
   const renderMonthSection = ({ item }: { item: [string, DastiKhata[]] }) => {
     const [monthKey, khatas] = item;
-    const isExpanded = expandedMonths.includes(monthKey);
+    const isExpanded = expandAll;
     
     return (
-      <MonthSection>
-        <TouchableOpacity onPress={() => toggleMonthExpanded(monthKey)}>
-          <MonthHeader>
-            <MonthTitle>{formatMonthDisplay(monthKey)}</MonthTitle>
-            <FontAwesome 
-              name={isExpanded ? "chevron-up" : "chevron-down"} 
-              size={16} 
-              color="#666" 
-            />
-          </MonthHeader>
+      <View key={monthKey} style={styles.monthSection}>
+        <TouchableOpacity 
+          style={styles.monthHeader}
+          onPress={() => toggleMonthExpanded(monthKey)}
+        >
+          <ThemedText style={styles.monthTitle}>
+            {formatMonthDisplay(monthKey)} ({khatas.length})
+          </ThemedText>
+          <FontAwesome 
+            name={isExpanded ? 'chevron-up' : 'chevron-down'} 
+            size={16} 
+            color="#4A80F0" 
+          />
         </TouchableOpacity>
         
         {isExpanded && (
-          <View style={{ marginBottom: 10 }}>
-            {khatas.map(khata => (
-              <React.Fragment key={khata.id}>
-                {renderDastiKhataItem({ item: khata })}
-              </React.Fragment>
-            ))}
+          <View style={styles.monthContent}>
+            {khatas.map(khata => renderDastiKhataItem({ item: khata }))}
           </View>
         )}
-      </MonthSection>
+      </View>
     );
   };
 
-  const monthData = groupByMonth();
-  const monthEntries = Object.entries(monthData);
-  const visibleMonthEntries = monthEntries.slice(0, visibleMonths);
-  const hasMoreMonths = monthEntries.length > visibleMonths;
-  
-  // Check if there are more than 6 months of data
   const hasOlderData = () => {
-    const groups: { [key: string]: DastiKhata[] } = {};
+    const filteredByStatus = dastiKhatas.filter(khata => {
+      const matchesTab = activeTab === 'paid' ? khata.isPaid : !khata.isPaid;
+      return matchesTab;
+    });
     
-    // Filter by payment status first
-    const filteredByStatus = dastiKhatas.filter(khata => 
-      activeTab === 'paid' ? khata.isPaid : !khata.isPaid
-    );
+    const groups: { [key: string]: DastiKhata[] } = {};
     
     filteredByStatus.forEach(khata => {
       const date = new Date(khata.date);
@@ -662,6 +375,30 @@ export default function DastiKhataScreen() {
     
     return Object.keys(groups).length > 6;
   };
+
+  const handleAddKhata = () => {
+    if (!newKhata.name.trim()) {
+      showAlert(t.error || 'Error', 'Please enter a name', 'error');
+      return;
+    }
+    if (newKhata.amount <= 0) {
+      showAlert(t.error || 'Error', 'Please enter a valid amount', 'error');
+      return;
+    }
+
+    const khata: DastiKhata = {
+      ...newKhata,
+      id: Date.now().toString(),
+      date: selectedDate
+    };
+
+    setDastiKhatas(prev => [khata, ...prev]);
+    setModalVisible(false);
+    showAlert(t.success || 'Success', 'Dasti Khata added successfully!', 'success');
+  };
+
+  const monthEntries = groupByMonth();
+  const visibleMonthEntries = monthEntries.slice(0, Math.ceil(visibleItems / 5));
 
   return (
     <ThemedView style={styles.container}>
@@ -684,7 +421,7 @@ export default function DastiKhataScreen() {
           onPress={() => setActiveTab('unpaid')}
         >
           <ThemedText style={[styles.tabText, activeTab === 'unpaid' && styles.activeTabText]}>
-            {t.unpaid || 'Unpaid'}
+            {t.unpaid || 'UNPAID'}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity 
@@ -692,7 +429,7 @@ export default function DastiKhataScreen() {
           onPress={() => setActiveTab('paid')}
         >
           <ThemedText style={[styles.tabText, activeTab === 'paid' && styles.activeTabText]}>
-            {t.paid || 'Paid'}
+            {t.paid || 'PAID'}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -732,7 +469,7 @@ export default function DastiKhataScreen() {
           </View>
           
           <FlatList
-            data={visibleMonthEntries.slice(0, visibleItems / 5)} // Approximate number of months to show based on item limit
+            data={visibleMonthEntries.slice(0, visibleItems / 5)}
             keyExtractor={([monthKey]) => monthKey}
             renderItem={renderMonthSection}
             contentContainerStyle={{ paddingBottom: 120 }}
@@ -747,252 +484,214 @@ export default function DastiKhataScreen() {
                   </TouchableOpacity>
                 ) : null}
                 
-                {hasOlderData() && !showAllData ? (
-                  <TouchableOpacity 
-                    style={styles.loadMoreButton}
-                    onPress={() => setShowAllData(true)}
-                  >
-                    <ThemedText style={styles.loadMoreText}>{t.loadPreviousData || 'Load Previous Data'}</ThemedText>
-                  </TouchableOpacity>
-                ) : null}
+                {loadingMore && (
+                  <View style={styles.loadingContainer}>
+                    <ThemedText style={styles.loadingText}>{t.loading || 'Loading...'}</ThemedText>
+                  </View>
+                )}
               </>
             }
           />
-          
-          {hasMoreMonths && (
-            <TouchableOpacity 
-              style={styles.loadMoreButton} 
-              onPress={handleLoadMore}
-            >
-              <ThemedText style={styles.loadMoreText}>{t.loadMore}</ThemedText>
-            </TouchableOpacity>
-          )}
         </View>
       ) : (
-        renderEmptyState()
+        <View style={styles.emptyContainer}>
+          <FontAwesome name="handshake-o" size={48} color="#ccc" style={styles.emptyIcon} />
+          <ThemedText style={styles.emptyText}>{t.noDastiKhataYet}</ThemedText>
+          <ThemedText style={styles.emptySubtext}>{t.tapToAddDastiKhata}</ThemedText>
+        </View>
       )}
 
-      <TouchableOpacity 
-        style={styles.fab} 
-        onPress={() => setShowAddModal(true)}
-      >
-        <FontAwesome name="plus" size={24} color="white" />
+      {/* Floating Action Button */}
+      <TouchableOpacity style={styles.fab} onPress={handleAddDastiKhata}>
+        <FontAwesome name="plus" size={20} color="white" />
       </TouchableOpacity>
 
-      {/* Add New Dasti Khata Modal */}
+      {/* Add Dasti Khata Modal */}
       <Modal
-        visible={showAddModal}
-        transparent={true}
+        visible={modalVisible}
         animationType="slide"
-        onRequestClose={() => setShowAddModal(false)}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <ModalContainer>
-            <ModalTitle>{t.addNewDastiKhata}</ModalTitle>
-            <StyledInput
+            <ThemedText type="title" style={styles.modalTitle}>
+              {t.addNewDastiKhata}
+            </ThemedText>
+            
+            <ThemedTextInput
               placeholder={t.personName}
-              value={newName}
-              onChangeText={setNewName}
-              placeholderTextColor="#999"
+              value={newKhata.name}
+              onChangeText={(text) => setNewKhata({...newKhata, name: text})}
+              style={styles.modalInput}
             />
-            <StyledInput
+            
+            <ThemedTextInput
               placeholder={t.amount}
+              value={newKhata.amount.toString()}
+              onChangeText={(text) => setNewKhata({...newKhata, amount: parseFloat(text) || 0})}
               keyboardType="numeric"
-              value={newAmount}
-              onChangeText={(text: string) => setNewAmount(text.replace(/[^0-9.]/g, ''))}
-              placeholderTextColor="#999"
+              style={styles.modalInput}
             />
-            <StyledInput
+            
+            <ThemedTextInput
               placeholder={t.description}
-              value={newDescription}
-              onChangeText={setNewDescription}
-              placeholderTextColor="#999"
+              value={newKhata.description}
+              onChangeText={(text) => setNewKhata({...newKhata, description: text})}
+              multiline
+              numberOfLines={3}
+              style={styles.modalInput}
             />
-            
-            {/* Date Selector */}
-            <DateContainer onPress={() => setShowDatePickerModal(true)}>
-              <FontAwesome name="calendar" size={18} color="#666" />
-              <DateText>{formattedDate}</DateText>
-            </DateContainer>
-            
-            <ButtonsRow>
-              <ModalButton 
-                style={{ backgroundColor: '#f0f0f0' }}
-                onPress={() => setShowAddModal(false)}
+
+            <View style={styles.datePickerActions}>
+              <TouchableOpacity 
+                style={[styles.datePickerButton, { backgroundColor: '#4A80F0' }]}
+                onPress={() => setShowDatePicker(true)}
               >
-                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>{t.cancel}</ThemedText>
-              </ModalButton>
-              <ModalButton 
-                style={{ backgroundColor: '#4A80F0' }}
-                onPress={handleAddDastiKhata}
+                <ThemedText style={{ color: 'white', fontWeight: '600' }}>
+                  {t.selectDate}: {newKhata.date}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.add}</ThemedText>
-              </ModalButton>
-            </ButtonsRow>
+                <ThemedText style={styles.cancelButtonText}>{t.cancel}</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.addButton]}
+                onPress={handleAddKhata}
+              >
+                <ThemedText style={styles.addButtonText}>{t.add}</ThemedText>
+              </TouchableOpacity>
+            </View>
           </ModalContainer>
         </View>
       </Modal>
 
       {/* Date Picker Modal */}
       <Modal
-        visible={showDatePickerModal}
+        visible={showDatePicker}
+        animationType="slide"
         transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowDatePickerModal(false)}
+        onRequestClose={() => setShowDatePicker(false)}
       >
-        <View style={styles.datePickerModalOverlay}>
-          <View style={styles.datePickerModalContent}>
-            <View style={styles.datePickerHeader}>
-              <ThemedText style={styles.datePickerTitle}>{t.selectDate}</ThemedText>
-              <TouchableOpacity onPress={() => setShowDatePickerModal(false)}>
-                <FontAwesome name="times" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Custom Calendar */}
+        <View style={styles.modalOverlay}>
+          <ModalContainer>
+            <ThemedText type="title" style={styles.modalTitle}>
+              {t.selectDate}
+            </ThemedText>
+            
             <View style={styles.calendarContainer}>
-              {/* Calendar Header */}
               <View style={styles.calendarHeader}>
-                <TouchableOpacity onPress={goPrevMonth} style={styles.calendarNavButton}>
-                  <FontAwesome name="chevron-left" size={18} color="#4A80F0" />
+                <TouchableOpacity style={styles.calendarNavButton} onPress={goPrevMonth}>
+                  <FontAwesome name="chevron-left" size={16} color="#4A80F0" />
                 </TouchableOpacity>
                 <ThemedText style={styles.calendarTitle}>
-                  {monthNames[currentMonth]} {currentYear}
+                  {currentMonthName} {currentYear}
                 </ThemedText>
-                <TouchableOpacity
-                  onPress={goNextMonth}
-                  style={styles.calendarNavButton}
-                  disabled={
-                    new Date(currentYear, currentMonth + 1, 1) > new Date()
-                  }
-                >
-                  <FontAwesome
-                    name="chevron-right"
-                    size={18}
-                    color={
-                      new Date(currentYear, currentMonth + 1, 1) > new Date()
-                        ? "#ccc"
-                        : "#4A80F0"
-                    }
-                  />
+                <TouchableOpacity style={styles.calendarNavButton} onPress={goNextMonth}>
+                  <FontAwesome name="chevron-right" size={16} color="#4A80F0" />
                 </TouchableOpacity>
               </View>
-
-              {/* Weekday Headers */}
+              
               <View style={styles.weekdayHeader}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                  <ThemedText key={index} style={styles.weekdayText}>
-                    {day}
-                  </ThemedText>
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                  <ThemedText key={day} style={styles.weekdayText}>{day}</ThemedText>
                 ))}
               </View>
-
-              {/* Calendar Days */}
+              
               <View style={styles.calendarDays}>
                 {generateCalendarDays().map((day, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.calendarDay,
-                      day === selectedDate.getUTCDate() &&
-                      currentMonth === selectedDate.getUTCMonth() &&
-                      currentYear === selectedDate.getUTCFullYear()
-                        ? styles.selectedDay
-                        : {},
-                      day === new Date().getDate() &&
-                      currentMonth === new Date().getMonth() &&
-                      currentYear === new Date().getFullYear()
-                        ? styles.todayDay
-                        : {},
-                      !day ? styles.emptyDay : {},
-                      day && new Date(currentYear, currentMonth, day as number) > new Date()
-                        ? styles.disabledDay
-                        : {},
+                      day === selectedDay && styles.selectedDay,
+                      day === today && styles.todayDay,
+                      !day && styles.emptyDay
                     ]}
-                    onPress={() => day && new Date(currentYear, currentMonth, day as number) <= new Date() && selectDate(day as number)}
-                    disabled={!day || new Date(currentYear, currentMonth, day as number) > new Date()}
+                    onPress={() => day && selectDate(day)}
+                    disabled={!day}
                   >
-                    {day ? (
-                      <ThemedText
-                        style={[
-                          styles.calendarDayText,
-                          day === selectedDate.getUTCDate() &&
-                          currentMonth === selectedDate.getUTCMonth() &&
-                          currentYear === selectedDate.getUTCFullYear()
-                            ? styles.selectedDayText
-                            : {},
-                          day === new Date().getDate() &&
-                          currentMonth === new Date().getMonth() &&
-                          currentYear === new Date().getFullYear()
-                            ? styles.todayDayText
-                            : {},
-                          new Date(currentYear, currentMonth, day) > new Date()
-                            ? styles.disabledDayText
-                            : {},
-                        ]}
-                      >
-                        {day}
-                      </ThemedText>
-                    ) : null}
+                    <ThemedText style={[
+                      styles.calendarDayText,
+                      day === selectedDay && styles.selectedDayText,
+                      day === today && styles.todayDayText
+                    ]}>
+                      {day || ''}
+                    </ThemedText>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
 
             <View style={styles.datePickerActions}>
-              <TouchableOpacity
-                style={[styles.datePickerButton, { backgroundColor: '#f0f0f0' }]}
-                onPress={() => setShowDatePickerModal(false)}
+              <TouchableOpacity 
+                style={[styles.datePickerButton, { backgroundColor: '#999' }]}
+                onPress={() => setShowDatePicker(false)}
               >
-                <ThemedText style={{ color: '#333', fontWeight: '600' }}>{t.cancel}</ThemedText>
+                <ThemedText style={{ color: 'white', fontWeight: '600' }}>
+                  {t.cancel}
+                </ThemedText>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity 
                 style={[styles.datePickerButton, { backgroundColor: '#4A80F0' }]}
-                onPress={() => setShowDatePickerModal(false)}
+                onPress={() => {
+                  setNewKhata({...newKhata, date: selectedDate});
+                  setShowDatePicker(false);
+                }}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.confirm}</ThemedText>
+                <ThemedText style={{ color: 'white', fontWeight: '600' }}>
+                  {t.confirm}
+                </ThemedText>
               </TouchableOpacity>
             </View>
-          </View>
+          </ModalContainer>
         </View>
       </Modal>
 
       {/* Delete Confirmation Modal */}
       <Modal
-        visible={showDeleteConfirm}
+        visible={deleteModalVisible}
+        animationType="slide"
         transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowDeleteConfirm(false)}
+        onRequestClose={() => setDeleteModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <ModalContainer style={{ padding: 20 }}>
-            <ModalTitle>{t.confirmDelete}</ModalTitle>
-            <ThemedText style={styles.confirmText}>
+          <ModalContainer>
+            <ThemedText type="title" style={styles.modalTitle}>
+              {t.confirmDelete}
+            </ThemedText>
+            <ThemedText style={styles.modalText}>
               {t.deleteConfirmText}
             </ThemedText>
-            <ButtonsRow>
-              <ModalButton
-                style={{ backgroundColor: '#f0f0f0' }}
-                onPress={() => setShowDeleteConfirm(false)}
+            <View style={styles.modalActions}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setDeleteModalVisible(false)}
               >
-                <ThemedText style={{ color: '#000000', fontWeight: '600' }}>{t.cancel}</ThemedText>
-              </ModalButton>
-              <ModalButton
-                style={{ backgroundColor: '#e74c3c' }}
+                <ThemedText style={styles.cancelButtonText}>{t.cancel}</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.deleteButton]}
                 onPress={handleDelete}
               >
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>{t.delete}</ThemedText>
-              </ModalButton>
-            </ButtonsRow>
+                <ThemedText style={styles.deleteButtonText}>{t.delete}</ThemedText>
+              </TouchableOpacity>
+            </View>
           </ModalContainer>
         </View>
       </Modal>
 
       <CustomAlert
         visible={alertVisible}
-        title={alertConfig.title}
-        message={alertConfig.message}
-        type={alertConfig.type}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
         onClose={() => setAlertVisible(false)}
       />
     </ThemedView>
@@ -1004,32 +703,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#4A80F0',
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  activeTabButton: {
-    backgroundColor: '#4A80F0',
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4A80F0',
-  },
-  activeTabText: {
-    color: 'white',
-  },
   header: {
     marginBottom: 24,
     alignItems: 'center',
@@ -1038,160 +711,247 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    marginTop: 4,
     opacity: 0.7,
-    textAlign: 'center',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    backgroundColor: '#2A2A2A',
+    borderRadius: 12,
+    padding: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderRadius: 8,
+    marginHorizontal: 2,
+  },
+  activeTabButton: {
+    backgroundColor: '#4A80F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#999',
+    letterSpacing: 0.5,
+  },
+  activeTabText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+  },
+  listContainer: {
+    flex: 1,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    marginBottom: 8,
   },
-  cardFooter: {
+  description: {
+    fontSize: 14,
+    opacity: 0.7,
+    marginBottom: 8,
+  },
+  actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 10,
   },
-  listContainer: {
-    flexGrow: 1,
-    paddingBottom: 120, // Increased padding for FAB and better scrolling
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+  },
+  unpaidButton: {
+    backgroundColor: 'rgba(74, 128, 240, 0.1)',
+  },
+  paidButton: {
+    backgroundColor: 'rgba(34, 164, 93, 0.1)',
+  },
+  actionText: {
+    marginLeft: 6,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  unpaidText: {
+    color: '#4A80F0',
+  },
+  paidText: {
+    color: '#22A45D',
+  },
+  deleteButtonPadding: {
+    padding: 8,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    paddingVertical: 40,
   },
   emptyIcon: {
     marginBottom: 16,
   },
   emptyText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 8,
+    textAlign: 'center',
   },
   emptySubtext: {
-    textAlign: 'center',
-    opacity: 0.7,
-    maxWidth: '80%',
-  },
-  description: {
     fontSize: 14,
-    opacity: 0.8,
-    marginTop: 6,
-    marginBottom: 4,
-  },
-  payButton: {
-    backgroundColor: '#4A80F0',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  deleteButton: {
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginRight: 13,
-    justifyContent: 'center',
-  },
-  payButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    opacity: 0.6,
+    textAlign: 'center',
   },
   fab: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
+    bottom: 20,
+    right: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: '#4A80F0',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   modalOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 16
   },
-  confirmText: {
-    fontSize: 16,
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: '#f5f5f5',
+  },
+  addButton: {
+    backgroundColor: '#4A80F0',
+  },
+  deleteButton: {
+    backgroundColor: '#FF3B30',
+  },
+  cancelButtonText: {
+    color: '#666',
+    fontWeight: '600',
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    opacity: 0.7,
+  },
   expandAllContainer: {
     marginBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
   },
   expandAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
-    borderRadius: 6,
+    justifyContent: 'center',
+    paddingVertical: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
   },
   expandAllText: {
-    marginRight: 6,
     fontSize: 14,
-    color: '#4A80F0',
     fontWeight: '600',
+    marginRight: 8,
+    color: '#4A80F0',
   },
-  loadMoreButton: {
-    backgroundColor: '#4A80F0',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 40,
+  monthSection: {
+    marginBottom: 16,
   },
-  loadMoreText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  // Date Picker Modal Styles
-  datePickerModalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 16,
-  },
-  datePickerModalContent: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 20,
-    width: '90%',
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  datePickerHeader: {
+  monthHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    marginBottom: 8,
   },
-  datePickerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  monthTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  monthContent: {
+    paddingLeft: 16,
+  },
+  loadMoreButton: {
+    backgroundColor: '#4A80F0',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  loadMoreText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  loadingText: {
+    fontSize: 14,
+    opacity: 0.7,
   },
   datePickerActions: {
     flexDirection: 'row',
@@ -1284,11 +1044,5 @@ const styles = StyleSheet.create({
   },
   disabledDayText: {
     color: '#999',
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
   },
 });

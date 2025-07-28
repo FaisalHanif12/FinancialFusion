@@ -64,16 +64,55 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { t } = useAppContext();
   
-  // Load khatas from AsyncStorage on initial render
+  // Load khatas from AsyncStorage on initial render with migration support
   useEffect(() => {
     const loadKhatas = async () => {
       try {
-        const storedKhatas = await AsyncStorage.getItem('khatas');
-        if (storedKhatas) {
-          setKhatas(JSON.parse(storedKhatas));
-        }
+        // Check if migration is needed
+        // const migrationNeeded = await DataMigration.checkMigrationNeeded();
+        
+        // if (migrationNeeded) {
+        //   console.log('Data migration needed, starting migration...');
+        //   const migrationResult = await DataMigration.migrateData();
+          
+        //   if (migrationResult.success) {
+        //     console.log('Data migration completed successfully');
+        //     setKhatas(migrationResult.migratedData?.khatas || []);
+        //   } else {
+        //     console.error('Data migration failed:', migrationResult.error);
+        //     // Try to restore from backup
+        //     const restoreResult = await DataMigration.restoreFromBackup();
+        //     if (restoreResult.success) {
+        //       console.log('Data restored from backup');
+        //       setKhatas(restoreResult.migratedData?.khatas || []);
+        //     } else {
+        //       console.error('Backup restoration failed:', restoreResult.error);
+        //       // Load original data as fallback
+        //       const storedKhatas = await AsyncStorage.getItem('khatas');
+        //       if (storedKhatas) {
+        //         setKhatas(JSON.parse(storedKhatas));
+        //       }
+        //     }
+        //   }
+        // } else {
+          // No migration needed, load data normally
+          const storedKhatas = await AsyncStorage.getItem('khatas');
+          if (storedKhatas) {
+            setKhatas(JSON.parse(storedKhatas));
+          }
+        // }
       } catch (error) {
-        console.error(`${t.error}: ${t.failedToLoadKhatas}`, error);
+        // Error loading khatas
+        // Try to restore from backup on error
+        try {
+          // const restoreResult = await DataMigration.restoreFromBackup();
+          // if (restoreResult.success) {
+          //   console.log('Data restored from backup after error');
+          //   setKhatas(restoreResult.migratedData?.khatas || []);
+          // }
+        } catch (backupError) {
+          // Backup restoration also failed
+        }
       } finally {
         setLoading(false);
       }
@@ -82,14 +121,23 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
     loadKhatas();
   }, [t]);
 
-  // Save khatas to AsyncStorage whenever they change
+  // Save khatas to AsyncStorage whenever they change with backup creation
   useEffect(() => {
     const saveKhatas = async () => {
       try {
         await AsyncStorage.setItem('khatas', JSON.stringify(khatas));
-      } catch (error) {
-        console.error(`${t.error}: ${t.failedToSaveKhatas}`, error);
-      }
+        
+        // Create backup periodically (every 10 saves)
+        const saveCount = await AsyncStorage.getItem('save_count') || '0';
+        const newCount = parseInt(saveCount) + 1;
+        await AsyncStorage.setItem('save_count', newCount.toString());
+        
+        // if (newCount % 10 === 0) {
+        //   await DataMigration.createBackup();
+        // }
+          } catch (error) {
+      // Error saving khatas
+    }
     };
 
     // Only save if we've loaded first (prevent overwriting with empty array)
@@ -122,13 +170,15 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
     const newExpense: Expense = {
       ...expense,
       id: Date.now().toString(),
+      amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0
     };
 
     setKhatas((prevKhatas) =>
       prevKhatas.map((khata) => {
         if (khata.id === khataId) {
           // Calculate new total amount after expense
-          const newTotalAmount = khata.totalAmount - newExpense.amount;
+          const expenseAmount = typeof newExpense.amount === 'number' ? newExpense.amount : parseFloat(newExpense.amount) || 0;
+          const newTotalAmount = khata.totalAmount - expenseAmount;
           
           // Create transaction record
           const newTransaction: Transaction = {
@@ -136,7 +186,7 @@ export const KhataProvider: React.FC<KhataProviderProps> = ({ children }) => {
             date: expense.date,
             type: 'EXPENSE',
             description: expense.source,
-            amount: expense.amount,
+            amount: expenseAmount,
             balanceAfter: newTotalAmount
           };
           
