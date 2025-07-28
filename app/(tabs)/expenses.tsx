@@ -51,16 +51,12 @@ export default function ExpensesScreen() {
       return dateB.getTime() - dateA.getTime();
     });
 
-    // Always show only the latest 6 months by default
-    const latestSixMonths = sortedEntries.slice(0, 6);
-    const olderMonths = sortedEntries.slice(6);
-
-    // If showing all data, append older months after the latest 6
-    if (showAllData) {
-      return [...latestSixMonths, ...olderMonths];
+    // If not showing all data, limit to 6 months
+    if (!showAllData && sortedEntries.length > 6) {
+      return sortedEntries.slice(0, 6);
     }
 
-    return latestSixMonths;
+    return sortedEntries;
   };
 
   // Check if there are more than 6 months of data

@@ -24,6 +24,10 @@ export default function AddExpenseModal({ visible, onClose, onAdd }: AddExpenseM
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' | 'info' }>({ title: '', message: '', type: 'error' });
+  const [errors, setErrors] = useState({
+    description: '',
+    amount: ''
+  });
 
   const handleDateSelect = (day: any) => {
     const selectedDate = new Date(day.timestamp);
@@ -36,33 +40,57 @@ export default function AddExpenseModal({ visible, onClose, onAdd }: AddExpenseM
     setAlertVisible(true);
   };
 
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      description: '',
+      amount: ''
+    };
+
+    // Validate description
+    if (!description.trim()) {
+      newErrors.description = t.pleaseEnterDescription || 'Please enter a description';
+      isValid = false;
+    } else if (description.trim().length < 3) {
+      newErrors.description = 'Description must be at least 3 characters';
+      isValid = false;
+    }
+
+    // Validate amount
+    if (!amount.trim()) {
+      newErrors.amount = t.pleaseEnterAmount || 'Please enter an amount';
+      isValid = false;
+    } else {
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        newErrors.amount = t.pleaseEnterValidAmount || 'Please enter a valid amount';
+        isValid = false;
+      } else if (amountNum > 1000000) {
+        newErrors.amount = 'Amount cannot exceed 1,000,000';
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleAdd = () => {
-    // Validate all fields
-    if (!description && !amount) {
-      showAlert(t.error || 'Error', 'Please complete all fields');
-      return;
-    } else if (!description) {
-      showAlert(t.error || 'Error', 'Please enter a description');
-      return;
-    } else if (!amount) {
-      showAlert(t.error || 'Error', 'Please enter an amount');
-      return;
-    } else if (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      showAlert(t.error || 'Error', 'Please enter a valid amount');
+    if (!validateForm()) {
       return;
     }
 
-    const parsedAmount = parseFloat(amount);
     onAdd({
       date,
-      description,
-      amount: isNaN(parsedAmount) ? 0 : parsedAmount,
+      description: description.trim(),
+      amount: parseFloat(amount),
     });
 
     // Reset form
     setDate(new Date());
     setDescription('');
     setAmount('');
+    setErrors({ description: '', amount: '' });
     onClose();
   };
 
@@ -75,60 +103,80 @@ export default function AddExpenseModal({ visible, onClose, onAdd }: AddExpenseM
     >
       <ThemedView style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>{t.addExpense}</ThemedText>
-            <TouchableOpacity onPress={onClose}>
-              <FontAwesome name="times" size={24} color={isDark ? '#fff' : '#000'} />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity 
-            style={styles.datePickerButton} 
-            onPress={() => setShowCalendar(!showCalendar)}
-          >
-            <ThemedText>{date.toLocaleDateString()}</ThemedText>
-            <FontAwesome name="calendar" size={20} color={isDark ? '#fff' : '#000'} />
-          </TouchableOpacity>
-
-          {showCalendar && (
-            <View style={styles.calendarContainer}>
-              <Calendar
-                onDayPress={handleDateSelect}
-                markedDates={{
-                  [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#4A80F0' }
-                }}
-                theme={{
-                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
-                  calendarBackground: isDark ? '#1E1E1E' : '#FFFFFF',
-                  textSectionTitleColor: isDark ? '#FFFFFF' : '#000000',
-                  selectedDayBackgroundColor: '#4A80F0',
-                  selectedDayTextColor: '#FFFFFF',
-                  todayTextColor: '#4A80F0',
-                  dayTextColor: isDark ? '#FFFFFF' : '#000000',
-                  monthTextColor: isDark ? '#FFFFFF' : '#000000',
-                }}
-              />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.modalHeader}>
+              <ThemedText style={styles.modalTitle}>{t.addExpense}</ThemedText>
+              <TouchableOpacity onPress={onClose}>
+                <FontAwesome name="times" size={24} color={isDark ? '#fff' : '#000'} />
+              </TouchableOpacity>
             </View>
-          )}
 
-          <ThemedTextInput
-            placeholder="Enter expense description"
-            value={description}
-            onChangeText={setDescription}
-            style={styles.input}
-          />
+            <TouchableOpacity 
+              style={styles.datePickerButton} 
+              onPress={() => setShowCalendar(!showCalendar)}
+            >
+              <ThemedText>{date.toLocaleDateString()}</ThemedText>
+              <FontAwesome name="calendar" size={20} color={isDark ? '#fff' : '#000'} />
+            </TouchableOpacity>
 
-          <ThemedTextInput
-            placeholder={t.amount}
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            style={styles.input}
-          />
+            {showCalendar && (
+              <View style={styles.calendarContainer}>
+                <Calendar
+                  onDayPress={handleDateSelect}
+                  markedDates={{
+                    [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#4A80F0' }
+                  }}
+                  theme={{
+                    backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                    calendarBackground: isDark ? '#1E1E1E' : '#FFFFFF',
+                    textSectionTitleColor: isDark ? '#FFFFFF' : '#000000',
+                    selectedDayBackgroundColor: '#4A80F0',
+                    selectedDayTextColor: '#FFFFFF',
+                    todayTextColor: '#4A80F0',
+                    dayTextColor: isDark ? '#FFFFFF' : '#000000',
+                    monthTextColor: isDark ? '#FFFFFF' : '#000000',
+                  }}
+                />
+              </View>
+            )}
 
-          <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-            <ThemedText style={styles.addButtonText}>{t.addExpense}</ThemedText>
-          </TouchableOpacity>
+            <View style={styles.inputContainer}>
+              <ThemedTextInput
+                placeholder="Enter expense description"
+                value={description}
+                onChangeText={(text) => {
+                  setDescription(text);
+                  if (errors.description) {
+                    setErrors(prev => ({ ...prev, description: '' }));
+                  }
+                }}
+                style={[styles.input, errors.description ? styles.inputError : null]}
+              />
+              {errors.description ? (
+                <ThemedText style={styles.errorText}>{errors.description}</ThemedText>
+              ) : null}
+
+              <ThemedTextInput
+                placeholder={t.amount}
+                value={amount}
+                onChangeText={(text) => {
+                  setAmount(text);
+                  if (errors.amount) {
+                    setErrors(prev => ({ ...prev, amount: '' }));
+                  }
+                }}
+                keyboardType="decimal-pad"
+                style={[styles.input, errors.amount ? styles.inputError : null]}
+              />
+              {errors.amount ? (
+                <ThemedText style={styles.errorText}>{errors.amount}</ThemedText>
+              ) : null}
+            </View>
+
+            <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+              <ThemedText style={styles.addButtonText}>{t.addExpense}</ThemedText>
+            </TouchableOpacity>
+          </ScrollView>
         </ThemedView>
       </ThemedView>
       <CustomAlert
@@ -158,6 +206,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '90%',
+    maxHeight: '80%',
     borderRadius: 20,
     padding: 20,
     shadowColor: '#000',
@@ -189,8 +238,20 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 15,
   },
-  input: {
+  inputContainer: {
     marginBottom: 15,
+  },
+  input: {
+    marginBottom: 8,
+  },
+  inputError: {
+    borderColor: '#e74c3c',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: '#e74c3c',
+    fontSize: 12,
+    marginBottom: 10,
   },
   addButton: {
     backgroundColor: '#4A80F0',
@@ -201,7 +262,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: 'white',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
